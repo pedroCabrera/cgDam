@@ -23,9 +23,9 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 # ---------------------------------
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
+CgDamROOT = Path(os.getenv("CgDamROOT"))
 
-sysPaths = [DJED_ROOT.as_posix(), DJED_ROOT.joinpath('src').as_posix()]
+sysPaths = [CgDamROOT.as_posix(), CgDamROOT.joinpath('src').as_posix()]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:

@@ -12,10 +12,10 @@ import re
 import json
 from pathlib import Path
 
-DJED_ROOT = os.getenv('DJED_ROOT')
-utils_path = os.path.join(DJED_ROOT, 'src')
+CgDamROOT = os.getenv('CgDamROOT')
+utils_path = os.path.join(CgDamROOT, 'src')
 
-sysPaths = [DJED_ROOT, utils_path]
+sysPaths = [CgDamROOT, utils_path]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:
@@ -54,7 +54,7 @@ class FileManager:
 
 
     def get_user_json(self, key, key1=None):
-        json_path = self.user_documents.joinpath("Djed.json")
+        json_path = self.user_documents.joinpath("cgDam.json")
 
         data = {}
 
@@ -70,7 +70,7 @@ class FileManager:
         return returned_data
 
     def set_user_json(self, **kwargs):
-        json_path = self.user_documents.joinpath("Djed.json")
+        json_path = self.user_documents.joinpath("cgDam.json")
 
         if json_path.is_file():
             data = self.read_json(json_path)
@@ -99,7 +99,7 @@ class FileManager:
 
     @property
     def user_documents(self):
-        user_dir = Path.home().joinpath('Documents', 'Djed')
+        user_dir = Path.home().joinpath('Documents', 'cgDam')
         user_dir.mkdir(parents=True, exist_ok=True)
         return user_dir
 

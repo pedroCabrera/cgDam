@@ -14,9 +14,9 @@ import struct
 import time
 import threading
 
-DJED_ROOT = os.getenv('DJED_ROOT')
+CgDamROOT = os.getenv('CgDamROOT')
 
-site.addsitedir(os.path.join(DJED_ROOT, 'venv', 'python39', 'Lib', 'site-packages'))
+site.addsitedir(os.path.join(CgDamROOT, 'venv', 'python39', 'Lib', 'site-packages'))
 
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *
@@ -337,7 +337,7 @@ def main():
     # socket.send('''exec('print("hello")')''')
 
     s = OpenSocket(host='127.0.0.1', port=55100)
-    s.send('unreal.log("Hello Djed...")')
+    s.send('unreal.log("Hello cgDam...")')
 
 
 

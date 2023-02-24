@@ -10,13 +10,13 @@ import sys
 import site
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-sysPaths = [DJED_ROOT.joinpath('src').as_posix()]
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+sysPaths = [CgDamROOT.joinpath('src').as_posix()]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
 
-site.addsitedir(DJED_ROOT.joinpath('venv', 'python39', 'Lib', 'site-packages').as_posix())
+site.addsitedir(CgDamROOT.joinpath('venv', 'python39', 'Lib', 'site-packages').as_posix())
 
 import pyblish.api
 import pyblish.util

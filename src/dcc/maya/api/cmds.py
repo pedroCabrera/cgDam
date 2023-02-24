@@ -25,10 +25,10 @@ from PySide2.QtWidgets import QMessageBox, QWidget
 from shiboken2 import wrapInstance
 from utils.generic import merge_dicts
 
-DJED_ROOT = os.getenv("DJED_ROOT")
-scripts_path = os.path.join(DJED_ROOT, "src")
+CgDamROOT = os.getenv("CgDamROOT")
+scripts_path = os.path.join(CgDamROOT, "src")
 
-sysPaths = [DJED_ROOT, scripts_path]
+sysPaths = [CgDamROOT, scripts_path]
 for sysPath in sysPaths:
     if not sysPath in sys.path:
         sys.path.append(sysPath)
@@ -66,7 +66,7 @@ class Maya:
         self.main_window = maya_main_window()
 
         self.fm = FileManager()
-        self.root = os.getenv("DJED_ROOT")
+        self.root = os.getenv("CgDamROOT")
 
         self.startup()
 

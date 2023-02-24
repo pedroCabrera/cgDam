@@ -4,11 +4,11 @@ Documentation:
 """
 import os
 
-DJED_ROOT = os.getenv("DJED_ROOT")
+CgDamROOT = os.getenv("CgDamROOT")
 
 
 def get_stylesheet():
-    return open(f"{DJED_ROOT}/src/utils/resources/stylesheet.qss").read()
+    return open(f"{CgDamROOT}/src/utils/resources/stylesheet.qss").read()
 
 
 if __name__ == '__main__':

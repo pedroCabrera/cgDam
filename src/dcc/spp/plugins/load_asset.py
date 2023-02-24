@@ -8,9 +8,9 @@ from pathlib import Path
 
 
 
-DJED_ROOT = Path(os.getenv('DJED_ROOT'))
+CgDamROOT = Path(os.getenv('CgDamROOT'))
 
-sysPaths = [DJED_ROOT, DJED_ROOT.joinpath('src')]
+sysPaths = [CgDamROOT, CgDamROOT.joinpath('src')]
 for sysPath in sysPaths:
     if str(sysPath) not in sys.path:
         sys.path.append(str(sysPath))
@@ -69,7 +69,7 @@ class LoadAsset(pyblish.api.InstancePlugin):
             if sp:
                 print("connected to substance")
                 cmd = 'import sys, os\n'
-                cmd += 'sys.path.append(os.path.join(os.getenv("DJED_ROOT"), "src"))\n'
+                cmd += 'sys.path.append(os.path.join(os.getenv("CgDamROOT"), "src"))\n'
                 cmd += 'from dcc.spp.api.pipeline import create_project\n'
                 cmd += f'create_project(r"{mesh_path}", project_path=r"{project_path}", cfg={cfg})\n'
                 cmd += 'print("Done")\n'

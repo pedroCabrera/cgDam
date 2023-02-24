@@ -14,7 +14,7 @@ import site
 from functools import wraps
 from urllib.parse import unquote
 
-sysPaths = [os.getenv("DJED_ROOT"), os.getenv("DJED_ROOT") + "/src"]
+sysPaths = [os.getenv("CgDamROOT"), os.getenv("CgDamROOT") + "/src"]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)

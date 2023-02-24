@@ -17,8 +17,8 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
-DJED_ROOT = os.getenv("DJED_ROOT")
-sysPaths = [DJED_ROOT, f"{DJED_ROOT}/src"]
+CgDamROOT = os.getenv("CgDamROOT")
+sysPaths = [CgDamROOT, f"{CgDamROOT}/src"]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
@@ -72,11 +72,11 @@ class SettingsWindow(QMainWindow):
                 message(None, "Warring", "Can not read the user settings data")
                 settings_file.rename(settings_file.with_suffix('bu_djed'))
         else:
-            with open(f"{DJED_ROOT}/src/settings/cfg/settings.json", "r") as f:
+            with open(f"{CgDamROOT}/src/settings/cfg/settings.json", "r") as f:
                 return json.load(f, object_pairs_hook=OrderedDict)
 
     def init_win(self):
-        title = "Djed Settings"
+        title = "cgDam Settings"
 
         Size_object = QGuiApplication.primaryScreen().availableGeometry()
         screen_height = Size_object.height()
@@ -176,14 +176,14 @@ class SettingsWindow(QMainWindow):
         if "$" in data:
             file_name = data.split('$')[-1]
             cfg_path_rel = f"src/settings/cfg/{file_name}.json"
-            cfg_path = os.path.join(DJED_ROOT, cfg_path_rel)
+            cfg_path = os.path.join(CgDamROOT, cfg_path_rel)
 
             if os.path.isfile(cfg_path):
                 ...
             cfg_path = os.path.abspath(cfg_path).replace('\\', '/')
             with open(cfg_path) as f:
                 data = json.load(f, object_pairs_hook=OrderedDict)
-                data['reference'] = {'$' + file_name: f'$DJED_ROOT/{cfg_path_rel}'}
+                data['reference'] = {'$' + file_name: f'$CgDamROOT/{cfg_path_rel}'}
 
         children = data.get('children', [])
         for i, child_data in enumerate(children):
@@ -230,7 +230,7 @@ class SettingsWindow(QMainWindow):
         if 'reference' in parent_data:
             ref_name = f'{parent_data.get("host")}_{parent_data.get("name")}'
             parent_data['reference'] = {
-                f'{ref_name}': f'$DJED_ROOT/src/settings/cfg/{ref_name}.json'
+                f'{ref_name}': f'$CgDamROOT/src/settings/cfg/{ref_name}.json'
             }
             fm.write_json(user_settings.joinpath(f'{ref_name}.json'), parent_data)
 

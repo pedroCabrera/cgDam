@@ -8,10 +8,10 @@ import sys
 
 import maya.cmds as cmds
 
-DJED_ROOT = os.getenv("DJED_ROOT")
-scripts_path = os.path.join(DJED_ROOT, "src")
+CgDamROOT = os.getenv("CgDamROOT")
+scripts_path = os.path.join(CgDamROOT, "src")
 
-sysPaths = [DJED_ROOT, scripts_path]
+sysPaths = [CgDamROOT, scripts_path]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)

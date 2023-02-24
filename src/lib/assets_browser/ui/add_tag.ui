@@ -278,7 +278,7 @@
   <customwidget>
    <class>LineEdit</class>
    <extends>QLineEdit</extends>
-   <header>Djed.Scripts.asset_browser.promoted_widgets.h</header>
+   <header>cgDam.Scripts.asset_browser.promoted_widgets.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -6,9 +6,9 @@ import os
 import site
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv('DJED_ROOT'))
+CgDamROOT = Path(os.getenv('CgDamROOT'))
 
-site.addsitedir(DJED_ROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
+site.addsitedir(CgDamROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
 
 import pyblish.api
 

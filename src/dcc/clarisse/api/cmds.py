@@ -13,9 +13,9 @@ from urllib.parse import unquote
 
 import ix
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
+CgDamROOT = Path(os.getenv("CgDamROOT"))
 
-sysPaths = [DJED_ROOT.joinpath('src').as_posix()]
+sysPaths = [CgDamROOT.joinpath('src').as_posix()]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
@@ -297,7 +297,7 @@ class Clarisse:
         root_ctx = root_ctx.replace("$assetName", asset_name)
 
         if ix.item_exists(root_ctx):
-            ix.ix.log_error(f"[Djed] Asset already exists at: '{root_ctx}'")
+            ix.ix.log_error(f"[cgDam] Asset already exists at: '{root_ctx}'")
             return
 
         root_ctx = self.create_context(root_ctx)

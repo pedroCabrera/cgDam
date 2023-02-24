@@ -1,5 +1,5 @@
 # >>>>>>>>>
-# Djed Tools
+# cgDam Tools
 # Add self
 
 import maya.cmds as cmds
@@ -17,13 +17,13 @@ def init_djed():
     import site
     from pathlib import Path
 
-    DJED_ROOT = Path(os.getenv('DJED_ROOT'))
+    CgDamROOT = Path(os.getenv('CgDamROOT'))
 
-    print('Djed: ', DJED_ROOT.as_posix())
+    print('cgDam: ', CgDamROOT.as_posix())
     try:
-        site.addsitedir(DJED_ROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
-        sys.path.append(DJED_ROOT.joinpath('src').as_posix())
-        sys.path.append(DJED_ROOT.joinpath('src/dcc/maya/hooks').as_posix())
+        site.addsitedir(CgDamROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
+        sys.path.append(CgDamROOT.joinpath('src').as_posix())
+        sys.path.append(CgDamROOT.joinpath('src/dcc/maya/hooks').as_posix())
 
         print('start DJED')
         from dcc.maya import shelves

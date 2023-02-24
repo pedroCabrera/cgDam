@@ -5,10 +5,10 @@ Documentation:
 import os
 import sys
 
-DJED_ROOT = os.getenv('DJED_ROOT')
-utils_path = os.path.join(DJED_ROOT, 'src')
+CgDamROOT = os.getenv('CgDamROOT')
+utils_path = os.path.join(CgDamROOT, 'src')
 
-sysPaths = [DJED_ROOT, utils_path]
+sysPaths = [CgDamROOT, utils_path]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:
@@ -18,7 +18,7 @@ from dcc.unreal.api.open_socket import listen
 
 import unreal
 
-unreal.log('Stating Djed receiving data...')
+unreal.log('Stating cgDam receiving data...')
 
 listen(host="127.0.0.1", port=55100)
 

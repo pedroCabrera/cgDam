@@ -15,14 +15,14 @@ import maya.cmds as cmds
 import maya.mel as mel
 
 # ---------------------------------
-shelf_name = "Djed"
+shelf_name = "cgDam"
 __python__ = sys.version_info[0]
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-icons = DJED_ROOT.joinpath('src', 'utils', 'resources', 'icons')
-modules = DJED_ROOT.joinpath('src/dcc/maya/shelves')
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+icons = CgDamROOT.joinpath('src', 'utils', 'resources', 'icons')
+modules = CgDamROOT.joinpath('src/dcc/maya/shelves')
 
-sysPaths = [DJED_ROOT.as_posix(), modules.as_posix()]
+sysPaths = [CgDamROOT.as_posix(), modules.as_posix()]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
@@ -72,13 +72,13 @@ def create_self():
                 if not script_file.is_file():
                     continue
 
-                cmd_text = "## Djed Tools ##\n\n"
+                cmd_text = "## cgDam Tools ##\n\n"
                 cmd_text += "import sys\n"
                 cmd_text += f"sys.argv = [r'{script_file.as_posix()}']\n"
                 cmd_text += f"with open(r'{script_file.as_posix()}', 'r') as f:\n"
                 cmd_text += "\texec(f.read())\n"
 
-                dc_cmd = "## Djed Tools ##\n\n"
+                dc_cmd = "## cgDam Tools ##\n\n"
                 dc_cmd += "import sys\n"
                 dc_cmd += f"sys.argv = [r'{script_file.as_posix()}', 'double']\n"
                 dc_cmd += f"with open(r'{script_file.as_posix()}', 'r') as f:\n"
@@ -116,8 +116,8 @@ def create_self():
 
     else:
         # message
-        cmds.confirmDialog(title='Djed Shelf Error',
-                           message='Unable to start Djed Shelf.\n Please check shelves path', button=['OK'])
+        cmds.confirmDialog(title='cgDam Shelf Error',
+                           message='Unable to start cgDam Shelf.\n Please check shelves path', button=['OK'])
 
 
 # Main function

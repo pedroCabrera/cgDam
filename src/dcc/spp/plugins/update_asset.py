@@ -5,7 +5,7 @@ Documentation:
 import os
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv('DJED_ROOT'))
+CgDamROOT = Path(os.getenv('CgDamROOT'))
 
 from dcc.spp.api.remote_connect import connect_spp
 from utils.dialogs import message
@@ -39,10 +39,10 @@ class UpdateAsset(pyblish.api.InstancePlugin):
             message(None, 'Error', 'Can not get the current session of substance painter.')
             return
 
-        cmd_text = "print('## Djed Tools ##')\n"
+        cmd_text = "print('## cgDam Tools ##')\n"
         cmd_text += "import os\n"
         cmd_text += "import sys\n"
-        cmd_text += "sys.path.append(os.path.join(os.getenv('DJED_ROOT'), 'src'))\n"
+        cmd_text += "sys.path.append(os.path.join(os.getenv('CgDamROOT'), 'src'))\n"
         cmd_text += "from dcc.spp.api.pipeline import reload_mesh\n"
         cmd_text += f'reload_mesh("{mesh_path}")\n'
 

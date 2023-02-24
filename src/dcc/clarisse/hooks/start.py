@@ -10,7 +10,7 @@ def add_clarisse_shelf(env_path=None):
         if not env_path:
             env_path = os.path.join(os.environ["APPDATA"], "Isotropix", "Clarisse", "5.0", "clarisse.env")
 
-        shelf_path = "$DJED_ROOT/src/dcc/clarisse/shelves/djed_shelf.cfg"
+        shelf_path = "$CgDamROOT/src/dcc/clarisse/shelves/djed_shelf.cfg"
         text = []
         with open(env_path, "r") as fh:
             for line in fh:

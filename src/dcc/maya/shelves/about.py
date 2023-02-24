@@ -20,8 +20,8 @@ _backColor = (0.0, 0.0, 0.0, 0.0)
 _imgLabel = ""
 
 # ---------------------------------
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-sysPaths = [DJED_ROOT.as_posix(), DJED_ROOT.joinpath('src').as_posix()]
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+sysPaths = [CgDamROOT.as_posix(), CgDamROOT.joinpath('src').as_posix()]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)

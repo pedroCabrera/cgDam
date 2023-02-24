@@ -10,8 +10,8 @@ import ast
 
 from PySide2.QtWidgets import QApplication
 
-DJED_ROOT = os.getenv("DJED_ROOT")
-sysPaths = [DJED_ROOT, f"{DJED_ROOT}/src"]
+CgDamROOT = os.getenv("CgDamROOT")
+sysPaths = [CgDamROOT, f"{CgDamROOT}/src"]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
@@ -22,7 +22,7 @@ fm = FileManager()
 
 user_settings_dir = fm.user_documents.joinpath('settings')
 user_settings_file = user_settings_dir.joinpath('settings.json')
-root_settings_dir = Path(f"{DJED_ROOT}/src/settings/cfg")
+root_settings_dir = Path(f"{CgDamROOT}/src/settings/cfg")
 root_settings_file = root_settings_dir.joinpath('settings.json')
 
 

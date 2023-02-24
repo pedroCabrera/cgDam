@@ -6,8 +6,8 @@ import sys
 import os
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-sysPaths = [DJED_ROOT.as_posix(), DJED_ROOT.joinpath('src').as_posix()]
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+sysPaths = [CgDamROOT.as_posix(), CgDamROOT.joinpath('src').as_posix()]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
@@ -21,16 +21,16 @@ from src.version import version
 
 def message(parent=None):
     about = QMessageBox(parent)
-    about.setWindowTitle("Djed Tools")
+    about.setWindowTitle("cgDam Tools")
     about.setWindowIcon(QIcon(":/icons/about.png"))
     about.setInformativeText(f'''
     <blockquote skip="true">
-        <h2><strong>Djed Tools</strong></h2>
+        <h2><strong>cgDam Tools</strong></h2>
     </blockquote>
     <p>Open-source assets pipeline that can manage the assets workflow.</p>
-    <p><a href="https://github.com/Michaelredaa/Djed">https://github.com/Michaelredaa/Djed</a></p>
+    <p><a href="https://github.com/Michaelredaa/cgDam">https://github.com/Michaelredaa/cgDam</a></p>
     <pstyle="margin-left: 40px;">Version: {version}</p>
-    <pre>2022 Djed, All rights reserved</pre>
+    <pre>2022 cgDam, All rights reserved</pre>
     <p><br></p>
         ''')
     pixmap = QPixmap(":/icons/djed.ico")

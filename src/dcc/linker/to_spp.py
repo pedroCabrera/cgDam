@@ -5,7 +5,7 @@ Documentation:
 import os
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv('DJED_ROOT'))
+CgDamROOT = Path(os.getenv('CgDamROOT'))
 
 ##########################
 import importlib

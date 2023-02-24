@@ -1045,11 +1045,11 @@
             {
               "name": "asset_root",
               "label": "Asset Root",
-              "default_value": "/Game/Djed/Assets/$assetName",
-              "value": "/Game/Djed/Assets/$assetName",
+              "default_value": "/Game/cgDam/Assets/$assetName",
+              "value": "/Game/cgDam/Assets/$assetName",
               "type": "input_text",
               "tooltip": "The directory root of in which the assets imported",
-              "placeholder": "e.g. '/Game/Djed/Assets/$assetName'"
+              "placeholder": "e.g. '/Game/cgDam/Assets/$assetName'"
             },
             {
               "name": "geometry_root",

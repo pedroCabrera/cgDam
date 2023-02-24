@@ -10,8 +10,8 @@ import sys
 from cx_Freeze import setup, Executable
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-sysPaths = [DJED_ROOT.as_posix(), DJED_ROOT.joinpath('src').as_posix()]
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+sysPaths = [CgDamROOT.as_posix(), CgDamROOT.joinpath('src').as_posix()]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
@@ -26,8 +26,8 @@ if sys.platform == "win32":
     base = "Win32GUI"
 
 executables = [
-    Executable("start.py", base=base, targetName="Djed",
-               icon=f"{DJED_ROOT.as_posix()}/src/utils/resources/icons/djed.ico")
+    Executable("start.py", base=base, targetName="cgDam",
+               icon=f"{CgDamROOT.as_posix()}/src/utils/resources/icons/djed.ico")
 ]
 
 include_files = [
@@ -43,9 +43,9 @@ build_options = {
 
 
 setup(
-    name="Djed",
+    name="cgDam",
     version=version,
-    description="Djed tools for 3d asset management",
+    description="cgDam tools for 3d asset management",
     options={"build_exe": build_options},
     executables=executables
 )

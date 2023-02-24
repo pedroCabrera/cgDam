@@ -10,8 +10,8 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 
-DJED_ROOT = os.getenv("DJED_ROOT")
-sysPaths = [DJED_ROOT, DJED_ROOT + '/src']
+CgDamROOT = os.getenv("CgDamROOT")
+sysPaths = [CgDamROOT, CgDamROOT + '/src']
 for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
@@ -23,16 +23,16 @@ from utils.resources.stylesheet import get_stylesheet
 from utils.resources.style_rc import *
 
 
-class DjedTray(QSystemTrayIcon):
+class cgDamTray(QSystemTrayIcon):
     """
     Creates a system tray
     """
 
     def __init__(self, icon, parent=None):
-        super(DjedTray, self).__init__(icon, parent)
+        super(cgDamTray, self).__init__(icon, parent)
         self._parent = parent
 
-        self.setToolTip('Djed tools')
+        self.setToolTip('cgDam tools')
 
         self.create_menus()
         self.init_environment()
@@ -48,12 +48,12 @@ class DjedTray(QSystemTrayIcon):
 
         self.show()
 
-        # self.showMessage('Djed', 'Starting')
+        # self.showMessage('cgDam', 'Starting')
 
     def create_menus(self):
         menu = QMenu(self._parent)
 
-        djed_action = menu.addAction("Djed Tools")
+        djed_action = menu.addAction("cgDam Tools")
 
         menu.addSeparator()
 
@@ -108,8 +108,8 @@ class DjedTray(QSystemTrayIcon):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     parent = QWidget()
-    icon_path = f"{DJED_ROOT}/src/utils/resources/icons/djed.png"
+    icon_path = f"{CgDamROOT}/src/utils/resources/icons/djed.png"
     icon = QIcon(icon_path)
-    tray = DjedTray(icon, parent)
+    tray = cgDamTray(icon, parent)
 
     sys.exit(app.exec_())

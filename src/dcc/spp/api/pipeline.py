@@ -10,8 +10,8 @@ from pathlib import Path
 
 from PySide2.QtWidgets import QMessageBox
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-sysPaths = [DJED_ROOT, DJED_ROOT.joinpath('src')]
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+sysPaths = [CgDamROOT, CgDamROOT.joinpath('src')]
 for sysPath in sysPaths:
     if str(sysPath) not in sys.path:
         sys.path.append(str(sysPath))
@@ -54,11 +54,11 @@ fm = FileManager()
 
 
 def info(msg):
-    substance_painter.logging.log(substance_painter.logging.INFO, "Djed", msg)
+    substance_painter.logging.log(substance_painter.logging.INFO, "cgDam", msg)
 
 
 def error_(msg):
-    substance_painter.logging.log(substance_painter.logging.ERROR, "Djed", msg)
+    substance_painter.logging.log(substance_painter.logging.ERROR, "cgDam", msg)
 
 
 class JS:

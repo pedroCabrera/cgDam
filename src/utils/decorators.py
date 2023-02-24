@@ -22,7 +22,7 @@ import threading
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 user_doc = os.path.expanduser('~')
-log_dir = os.path.join(user_doc, "Djed")
+log_dir = os.path.join(user_doc, "cgDam")
 if not os.path.isdir(log_dir):
     os.makedirs(log_dir)
 file_handler = logging.FileHandler(os.path.join(log_dir, "ERROR_"+os.environ.get('USERNAME')+'.log'))

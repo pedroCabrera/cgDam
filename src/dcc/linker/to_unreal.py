@@ -8,9 +8,9 @@ import os
 import sys
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
+CgDamROOT = Path(os.getenv("CgDamROOT"))
 
-sysPaths = [DJED_ROOT.as_posix(), DJED_ROOT.joinpath('src').as_posix()]
+sysPaths = [CgDamROOT.as_posix(), CgDamROOT.joinpath('src').as_posix()]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:
@@ -27,11 +27,11 @@ def send_to_unreal(data, port_num=None):
 
         unreal_socket = OpenSocket(host='127.0.0.1', port=port_num)
 
-        cmd_text = "## Djed Tools ##\n\n"
-        cmd_text += "print('## Djed Tools ##')\n"
-        cmd_text += "print('[Djed] Start of receiving data')\n"
+        cmd_text = "## cgDam Tools ##\n\n"
+        cmd_text += "print('## cgDam Tools ##')\n"
+        cmd_text += "print('[cgDam] Start of receiving data')\n"
         cmd_text += "import sys, os, traceback\n"
-        cmd_text += "sys.path.append(os.getenv('DJED_ROOT') + '/src')\n"
+        cmd_text += "sys.path.append(os.getenv('CgDamROOT') + '/src')\n"
         cmd_text += "try:\n"
         cmd_text += "\tfrom dcc.unreal.plugins.load_asset import LoadAsset\n"
         cmd_text += "\timport importlib;import dcc.unreal.plugins.load_asset;importlib.reload(dcc.unreal.plugins.load_asset)\n"
@@ -40,7 +40,7 @@ def send_to_unreal(data, port_num=None):
         cmd_text += f"\tLoadAsset().process(instance)\n"
         cmd_text += f"except:\n"
         cmd_text += f"\tprint(traceback.format_exc())\n"
-        cmd_text += "print('[Djed] End of receiving data')\n"
+        cmd_text += "print('[cgDam] End of receiving data')\n"
 
         unreal_socket.send(f'py {cmd_text}')
 

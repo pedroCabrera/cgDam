@@ -17,7 +17,7 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 
-DJED_ROOT = os.getenv("DJED_ROOT")
+CgDamROOT = os.getenv("CgDamROOT")
 
 
 # ---------------------------------
@@ -420,7 +420,7 @@ class SettingsTree(QTreeView):
                 if "$" in data[i]:
                     file_name = data[i].split('$')[-1]
                     cfg_path_rel = f"src/settings/cfg/{file_name}.json"
-                    cfg_path = os.path.join(DJED_ROOT, cfg_path_rel)
+                    cfg_path = os.path.join(CgDamROOT, cfg_path_rel)
 
                     if not os.path.isfile(cfg_path):
                         continue
@@ -428,7 +428,7 @@ class SettingsTree(QTreeView):
                     cfg_path = os.path.abspath(cfg_path).replace('\\', '/')
                     with open(cfg_path) as f:
                         data_list = json.load(f, object_pairs_hook=OrderedDict)
-                        data_list['reference'] = {data[i]: f'$DJED_ROOT/{cfg_path_rel}'}
+                        data_list['reference'] = {data[i]: f'$CgDamROOT/{cfg_path_rel}'}
                         data.pop(i)
                         data.insert(i, data_list)
 

@@ -8,10 +8,10 @@ import re
 import ast
 from pathlib import Path
 
-DJED_ROOT = os.getenv('DJED_ROOT')
-utils_path = os.path.join(DJED_ROOT, 'src')
+CgDamROOT = os.getenv('CgDamROOT')
+utils_path = os.path.join(CgDamROOT, 'src')
 
-sysPaths = [DJED_ROOT, utils_path]
+sysPaths = [CgDamROOT, utils_path]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:

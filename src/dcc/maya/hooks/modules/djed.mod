@@ -1,2 +1,2 @@
-+ Djed 1.0 ..\
++ cgDam 1.0 ..\
 scripts: ..\

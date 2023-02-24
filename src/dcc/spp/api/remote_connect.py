@@ -10,8 +10,8 @@ import os
 import sys
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-sysPaths = [DJED_ROOT, DJED_ROOT.joinpath('src')]
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+sysPaths = [CgDamROOT, CgDamROOT.joinpath('src')]
 for sysPath in sysPaths:
     if str(sysPath) not in sys.path:
         sys.path.append(str(sysPath))
@@ -33,7 +33,7 @@ def connect_spp():
         sp = RemotePainter()
         sp.checkConnection()
         sp.execScript('import substance_painter', 'python')
-        sp.execScript('[Djed]', 'python')
+        sp.execScript('[cgDam]', 'python')
         return sp
     except:
         pass

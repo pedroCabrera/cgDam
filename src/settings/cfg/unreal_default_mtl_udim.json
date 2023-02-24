@@ -6,8 +6,8 @@
     {
       "name": "standard_surface",
       "label": "Standard Surface",
-      "default_value": "/Game/Djed/Presets/MasterMaterials/Djed_defaultMTL_UDIM",
-      "value": "/Game/Djed/Presets/MasterMaterials/Djed_defaultMTL_UDIM",
+      "default_value": "/Game/cgDam/Presets/MasterMaterials/cgDam_defaultMTL_UDIM",
+      "value": "/Game/cgDam/Presets/MasterMaterials/cgDam_defaultMTL_UDIM",
       "type": "input_text",
       "tooltip": "The UDIM master material game path",
       "placeholder": ""

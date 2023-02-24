@@ -17,12 +17,12 @@ import os
 import sys
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
+CgDamROOT = Path(os.getenv("CgDamROOT"))
 
 sysPaths = [
-    DJED_ROOT.as_posix(),
-    DJED_ROOT.joinpath('src').as_posix(),
-    DJED_ROOT.joinpath('venv/python39/Lib/site-packages').as_posix()
+    CgDamROOT.as_posix(),
+    CgDamROOT.joinpath('src').as_posix(),
+    CgDamROOT.joinpath('venv/python39/Lib/site-packages').as_posix()
 ]
 
 for sysPath in sysPaths:
@@ -47,7 +47,7 @@ from dcc.maya.plugins import (
 
 
 def process(**kwargs):
-    plugin_path = os.getenv('DJED_ROOT') + r"src/dcc/maya/plugins"
+    plugin_path = os.getenv('CgDamROOT') + r"src/dcc/maya/plugins"
 
     pyblish.util.plugin.deregister_all_plugins()
     # pyblish.api.deregister_plugin_path(plugin_path)

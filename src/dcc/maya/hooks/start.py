@@ -5,7 +5,7 @@ Documentation:
 import os
 from pathlib import Path
 
-DJED_ROOT = Path(os.getenv('DJED_ROOT'))
+CgDamROOT = Path(os.getenv('CgDamROOT'))
 
 
 def add_maya_module(maya_module_path=None):
@@ -17,8 +17,8 @@ def add_maya_module(maya_module_path=None):
 
         maya_module_path.mkdir(parents=True, exist_ok=True)
         mod_file = maya_module_path.joinpath("djed.mod")
-        root_path = DJED_ROOT.joinpath('src/dcc/maya/hooks/scripts').as_posix()
-        cmd = f'+ Djed 1.0 {root_path}\nscripts: {root_path}'
+        root_path = CgDamROOT.joinpath('src/dcc/maya/hooks/scripts').as_posix()
+        cmd = f'+ cgDam 1.0 {root_path}\nscripts: {root_path}'
 
         mod_file.unlink(missing_ok=True)
 

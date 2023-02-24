@@ -1,4 +1,4 @@
-How to activate Djed on unreal 5
+How to activate cgDam on unreal 5
 
 - Plugins >> Scripting >> Python -AllowPythonDeveloperMode
 - Plugins >> Scripting >> Editor scripting utility

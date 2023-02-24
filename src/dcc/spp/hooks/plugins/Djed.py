@@ -18,8 +18,8 @@ import substance_painter_plugins
 # ---------------------------------
 # Variables
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
-sysPaths = [DJED_ROOT, DJED_ROOT.joinpath('src')]
+CgDamROOT = Path(os.getenv("CgDamROOT"))
+sysPaths = [CgDamROOT, CgDamROOT.joinpath('src')]
 for sysPath in sysPaths:
     if str(sysPath) not in sys.path:
         sys.path.append(str(sysPath))
@@ -318,7 +318,7 @@ class SubstanceIntegration():
         about.message(self.main_window)
 
     def _on_reload_plugin(self):
-        plugin = importlib.import_module("Djed")
+        plugin = importlib.import_module("cgDam")
         substance_painter_plugins.reload_plugin(plugin)
 
     def get_save_path(self):

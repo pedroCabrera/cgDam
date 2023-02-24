@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Package that declaring Djed version.
+Package that declaring cgDam version.
 """
 VERSION_MAJOR = 0
 VERSION_MINOR = 1

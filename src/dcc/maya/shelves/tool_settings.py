@@ -16,9 +16,9 @@ from PySide2.QtWidgets import *
 
 from settings.settings import get_dcc_cfg
 
-DJED_ROOT = Path(os.getenv("DJED_ROOT"))
+CgDamROOT = Path(os.getenv("CgDamROOT"))
 
-sysPaths = [str(DJED_ROOT), str(DJED_ROOT.joinpath('src'))]
+sysPaths = [str(CgDamROOT), str(CgDamROOT.joinpath('src'))]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:
