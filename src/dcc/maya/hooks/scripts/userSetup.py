@@ -10,7 +10,7 @@ def open_commandPort():
         cmds.commandPort(name=":4436", sourceType="python")
 
 
-def init_djed():
+def init_cgDam():
     import traceback
     import os
     import sys
@@ -25,7 +25,7 @@ def init_djed():
         sys.path.append(CgDamROOT.joinpath('src').as_posix())
         sys.path.append(CgDamROOT.joinpath('src/dcc/maya/hooks').as_posix())
 
-        print('start DJED')
+        print('start cgDam')
         from dcc.maya import shelves
         shelves.main()
         open_commandPort()
@@ -36,5 +36,5 @@ def init_djed():
     except:
         print(traceback.format_exc())
 
-cmds.evalDeferred("init_djed()")
+cmds.evalDeferred("init_cgDam()")
 # <<<<<<<<<

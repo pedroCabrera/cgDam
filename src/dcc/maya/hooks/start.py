@@ -16,9 +16,9 @@ def add_maya_module(maya_module_path=None):
             maya_module_path = Path(str(maya_module_path))
 
         maya_module_path.mkdir(parents=True, exist_ok=True)
-        mod_file = maya_module_path.joinpath("djed.mod")
+        mod_file = maya_module_path.joinpath("cgDam.mod")
         root_path = CgDamROOT.joinpath('src/dcc/maya/hooks/scripts').as_posix()
-        cmd = f'+ cgDam 1.0 {root_path}\nscripts: {root_path}'
+        cmd = f'+ cgDam 1.0 {root_path}\nscripts: {root_path}\nCgDamROOT = {CgDamROOT} '
 
         mod_file.unlink(missing_ok=True)
 
