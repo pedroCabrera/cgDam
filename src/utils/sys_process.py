@@ -12,7 +12,8 @@ from ctypes import windll
 
 CgDamROOT = Path(os.getenv('CgDamROOT'))
 
-site.addsitedir(CgDamROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
+#site.addsitedir(CgDamROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
+site.addsitedir(CgDamROOT.joinpath('../.conda/Lib/site-packages').as_posix())
 
 import subprocess
 import psutil

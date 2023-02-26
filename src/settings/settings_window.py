@@ -23,7 +23,7 @@ for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
 
-from utils.assets_db import AssetsDB
+#from utils.assets_db import AssetsDB
 from utils.file_manager import FileManager
 from utils.dialogs import message
 from settings.widgets import *
@@ -33,7 +33,7 @@ from utils.resources.style_rc import *
 
 # ---------------------------------
 # Variables
-db = AssetsDB()
+#db = AssetsDB()
 fm = FileManager()
 
 user_settings = fm.user_documents.joinpath('settings')

@@ -34,7 +34,7 @@ importlib.reload(dcc.maya.api.cmds)
 
 
 from utils.file_manager import FileManager
-from utils.assets_db import AssetsDB
+#from utils.assets_db import AssetsDB
 from utils.dialogs import browse_dirs
 from utils.resources.style_rc import *
 from settings.settings import get_value, set_value, reset_value
@@ -46,7 +46,7 @@ from dcc.maya.shelves.ui import (
     ClickedLabel
 )
 
-db = AssetsDB()
+#db = AssetsDB()
 
 SizeObject = QDesktopWidget().screenGeometry(-1)
 ScreenHeight = SizeObject.height()
