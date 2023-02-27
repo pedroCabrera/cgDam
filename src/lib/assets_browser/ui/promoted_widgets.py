@@ -36,6 +36,7 @@ class ItemRoles():
     SPP = Qt.UserRole + 12
     Tags = Qt.UserRole + 13
     Projects = Qt.UserRole + 14
+    AssetType = Qt.UserRole + 15
 
 
 def add_checkable_action(qmenu, name, checked=True):
@@ -90,10 +91,10 @@ class CustomProxyFilter(QSortFilterProxyModel):
         super(CustomProxyFilter, self).__init__()
 
         self.matched_string = ''
+        self.asset_type_filter = 'All'
         self.search_filter = {'names': True, 'tags':True, 'projects':True}
-
+    
     def is_match(self, names):
-
         string_list = str(self.matched_string).split(' ')
         for string in string_list:
             string = string.strip()
@@ -110,6 +111,11 @@ class CustomProxyFilter(QSortFilterProxyModel):
     def filterAcceptsRow(self, row, index):
         """Re-implementing built-in to hide columns wif non matches."""
         _index = self.sourceModel().index(row, 0)
+        asset_type = _index.data(ItemRoles.AssetType)
+
+        if self.asset_type_filter!= "All" and asset_type != self.asset_type_filter:
+            return False
+        
         self.matched_string = self.filterRegExp().pattern().lower()
         if not self.matched_string:
             return True
@@ -117,7 +123,6 @@ class CustomProxyFilter(QSortFilterProxyModel):
         tags = _index.data(ItemRoles.Tags)
         projects = _index.data(ItemRoles.Projects)
         asset_name = _index.data(ItemRoles.AssetName)
-
         return (self.is_match([asset_name]) and self.search_filter.get('names')) \
                or (self.is_match(tags) and self.search_filter.get('tags')) \
                or (self.is_match(projects) and self.search_filter.get('projects'))
@@ -198,6 +203,7 @@ class AssetItem(QStandardItem):
         self.setIcon(QIcon(pixmap))
         self.setText(data.get("asset_name"))
         self.setData(data.get("uuid"), ItemRoles.UUID)
+        self.setData(data.get("asset_type"), ItemRoles.AssetType)
         self.setData(data.get("asset_name"), ItemRoles.AssetName)
         self.setData(data.get("thumb_path"), ItemRoles.Thumbnail)
         self.setData(data.get("asset_id"), ItemRoles.AssetID)

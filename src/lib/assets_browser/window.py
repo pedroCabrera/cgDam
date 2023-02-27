@@ -256,15 +256,16 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
             item_data = {
                 "asset_id": row[0],
                 "asset_name": row[1],
-                "creation_date": row[2],
-                "modification_date": row[3],
-                "uuid": row[4],
-                "obj_path": row[7],
-                "usd_path": row[8],
-                "abc_path": row[9],
-                "fbx_path": row[10],
-                "ma_path": row[11],
-                "spp_path": row[12],
+                "asset_type": row[2],
+                "creation_date": row[3],
+                "modification_date": row[4],
+                "uuid": row[5],
+                "obj_path": row[8],
+                "usd_path": row[9],
+                "abc_path": row[10],
+                "fbx_path": row[11],
+                "ma_path": row[12],
+                "spp_path": row[13],
                 "thumb_path": thumb_path,
                 "tags": db.get_tags(asset_name=row[1]),
                 "projects": db.get_projects(asset_name=row[1])
@@ -458,6 +459,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         asset['geometry_type'] = 'Alembic Bundle'
 
         send_to_clarisse(asset)
+
     def on_open_unreal(self):
         from dcc.linker.to_unreal import send_to_unreal
 

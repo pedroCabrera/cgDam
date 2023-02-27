@@ -13,7 +13,7 @@ import os
 import site
 from functools import wraps
 from urllib.parse import unquote
-
+os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
 sysPaths = [os.getenv("CgDamROOT"), os.getenv("CgDamROOT") + "/src"]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
@@ -109,10 +109,12 @@ class AssetsDB(Connect):
                 CREATE TABLE IF NOT EXISTS {table_name} (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
+                asset_type_name TEXT,
                 creation_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 modification_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 uuid TEXT DEFAULT (lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)))),
-                UNIQUE(name)
+                UNIQUE(name),
+                FOREIGN KEY (asset_type_name) REFERENCES asset_types (name) ON DELETE SET DEFAULT
                 );
         '''
         cur.execute(query)
@@ -212,6 +214,54 @@ class AssetsDB(Connect):
         cur.execute(query)
 
     @Connect.db
+    def create_asset_types_table(self, conn):
+        table_name = "asset_types"
+
+        # self.delete_table(table_name=table_name)
+        cur = conn.cursor()
+        query = f'''
+                    CREATE TABLE IF NOT EXISTS {table_name} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    UNIQUE(name)
+                    );
+        '''
+        cur.execute(query)
+
+    @Connect.db
+    def create_category_table(self, conn):
+        table_name = "categories"
+
+        # self.delete_table(table_name=table_name)
+        cur = conn.cursor()
+        query = f'''
+                    CREATE TABLE IF NOT EXISTS {table_name} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    parent_id INTEGER,
+                    FOREIGN KEY (parent_id) REFERENCES categories (id) ON DELETE CASCADE
+                    );
+        '''
+        cur.execute(query)
+
+    @Connect.db
+    def create_asset_category_table(self, conn):
+        table_name = "asset_category"
+
+        # self.delete_table(table_name=table_name)
+        cur = conn.cursor()
+        query = f'''
+                    CREATE TABLE IF NOT EXISTS {table_name} (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    asset_id INTEGER,
+                    category_id INTEGER,
+                    FOREIGN KEY (asset_id) REFERENCES assets (id) ON DELETE CASCADE
+                    FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
+                    );
+        '''
+        cur.execute(query)
+
+    @Connect.db
     def create_tags_table(self, conn):
         table_name = "tags"
 
@@ -270,6 +320,10 @@ class AssetsDB(Connect):
         self.create_geometry_table()
         self.create_texture_table()
         self.create_thumbnail_table()
+
+        self.create_asset_types_table()
+        self.create_category_table()
+        self.create_asset_category_table()
 
     @Connect.db
     def get_last_id(self, conn):
@@ -344,17 +398,33 @@ class AssetsDB(Connect):
             '''
 
             cur.execute(query)
-
+ 
     @Connect.db
-    def add_asset(self, conn, asset_name):
-        now = datetime.datetime.now()
-        current_date = now.strftime("%Y/%m/%d, %H:%M:%S")
+    def add_asset_type(self, conn, asset_type_name):
         cur = conn.cursor()
         query = f'''
-                INSERT INTO assets 
-                (name, modification_date)
+                INSERT INTO asset_types 
+                (name)
                 VALUES
-                ("{asset_name}", "{current_date}")
+                ("{asset_type_name}");
+        '''
+        cur.execute(query)
+
+    @Connect.db
+    def add_asset(self, conn, asset_name, asset_type):
+        cur = conn.cursor()
+        asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type}";').fetchone()
+        if not asset_type_id:
+            raise Exception("You must specify a valid asset type to register an asset")
+            return
+        now = datetime.datetime.now()
+        current_date = now.strftime("%Y/%m/%d, %H:%M:%S")
+        
+        query = f'''
+                INSERT INTO assets 
+                (name, asset_type_name, modification_date)
+                VALUES
+                ("{asset_name}", "{asset_type}", "{current_date}")
                 ON CONFLICT(name) 
                 DO UPDATE
                 SET modification_date = "{current_date}";
@@ -600,6 +670,20 @@ class AssetsDB(Connect):
         return [x[0] for x in projects if x[0]]
 
     @Connect.db
+    def all_asset_types(self, conn):
+
+        cur = conn.cursor()
+        query = f'''
+                SELECT name FROM asset_types
+                ORDER BY 
+                name
+        '''
+        cur.execute(query)
+        tags = cur.fetchall()
+
+        return [x[0] for x in tags if x[0]]
+    
+    @Connect.db
     def all_tags(self, conn):
 
         cur = conn.cursor()
@@ -630,7 +714,7 @@ class AssetsDB(Connect):
     def delete_asset_projects(self, asset_name=None, asset_id=None):
         if asset_id is None:
             asset_id = self.get_asset_id(asset_name=asset_name)
-        self.delete_row(table_name="project_tags", col="asset_id", value=asset_id)
+        self.delete_row(table_name="asset_projects", col="asset_id", value=asset_id)
 
     def delete_asset_tags(self, asset_name=None, asset_id=None):
         if asset_id is None:
@@ -683,10 +767,15 @@ class AssetsDB(Connect):
 # Main Function
 def main():
     db = AssetsDB()
-    # db.create_default_tables()
-    # db.create_geometry_table()
-    data = json.dumps({'foo': 'bar'})
-    db.add_geometry(asset_name="tv_table", mesh_data=f'{data}')
+
+    #db.add_asset_type(asset_type_name="3D Asset")
+    #db.add_asset_type(asset_type_name="Textures")
+    #db.add_asset_type(asset_type_name="Shaders")
+    #db.add_asset_type(asset_type_name="HDRI")
+
+    db.add_asset(asset_name="test_2",asset_type="3D Asset")
+    #data = json.dumps({'foo': 'bar'})
+    #db.add_geometry(asset_name="tv_table", mesh_data=f'{data}')
     # x = db.add_tag(asset_name="ABAGORA", tag_name="tag1")
     # x = db.get_assets_data()
     # print(db.get_tags(asset_name="ABAGORA"))
