@@ -57,7 +57,8 @@ def process(**kwargs):
     pyblish.api.register_host("maya")
     pyblish.api.register_gui("pyblish_lite")
     # pyblish.api.register_gui("pyblish_qml")
-
+    
+    pyblish_maya.setup()
     # options
     pyblish_lite.settings.WindowTitle = "Publish Geometry"
     pyblish_lite.settings.InitialTab = "overview"  # "artist", "overview" and "terminal"
