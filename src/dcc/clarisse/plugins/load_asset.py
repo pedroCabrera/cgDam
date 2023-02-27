@@ -18,8 +18,8 @@ for sysPath in sysPaths:
     if sysPath not in sys.path:
         sys.path.append(sysPath)
 
-site.addsitedir(CgDamROOT.joinpath('venv', 'python39', 'Lib', 'site-packages').as_posix())
-
+#site.addsitedir(CgDamROOT.joinpath('venv', 'python39', 'Lib', 'site-packages').as_posix())
+site.addsitedir(CgDamROOT.joinpath('../.conda/Lib/site-packages').as_posix())
 ############################################
 import importlib
 import dcc.clarisse.api.cmds

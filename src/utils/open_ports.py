@@ -13,10 +13,12 @@ import socket
 import struct
 import time
 import threading
+from pathlib import Path
 
-CgDamROOT = os.getenv('CgDamROOT')
+CgDamROOT = Path(os.getenv('CgDamROOT'))
 
-site.addsitedir(os.path.join(CgDamROOT, 'venv', 'python39', 'Lib', 'site-packages'))
+#site.addsitedir(os.path.join(CgDamROOT, 'venv', 'python39', 'Lib', 'site-packages'))
+site.addsitedir(CgDamROOT.joinpath('../.conda/Lib/site-packages').as_posix())
 
 from PySide2.QtCore import *
 from PySide2.QtWidgets import *

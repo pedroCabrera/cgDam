@@ -21,7 +21,8 @@ def init_cgDam():
 
     print('cgDam: ', CgDamROOT.as_posix())
     try:
-        site.addsitedir(CgDamROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
+        #site.addsitedir(CgDamROOT.joinpath('venv/python39/Lib/site-packages').as_posix())
+        site.addsitedir(CgDamROOT.joinpath('../.conda/Lib/site-packages').as_posix())
         sys.path.append(CgDamROOT.joinpath('src').as_posix())
         sys.path.append(CgDamROOT.joinpath('src/dcc/maya/hooks').as_posix())
 
