@@ -89,8 +89,6 @@ def setInterval(interval):
         return wrapper
     return decorator
 
-
-
 def debug(func=None):
     """
     To print the function name
@@ -107,6 +105,31 @@ def debug(func=None):
 
 def func():
     print('five')
+
+class SingletonDecorator:
+    """Decorator to make class unique, so each time called same object returned
+    """
+    allInstances = []
+
+    @staticmethod
+    def destroyAll():
+        for instance in SingletonDecorator.allInstances:
+            instance.destroy()
+
+    def __init__(self, cls):
+        self.cls = cls
+        self.instance = None
+        self.allInstances.append(self)
+
+    def destroy(self):
+        del self.instance
+        self.instance = None
+
+    def __call__(self, *args, **kwds):
+        if self.instance is None:
+            self.instance = self.cls(*args, **kwds)
+
+        return self.instance
 
 # Main function
 def main():
