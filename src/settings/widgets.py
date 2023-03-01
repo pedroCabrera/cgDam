@@ -413,14 +413,14 @@ class SettingsTree(QTreeView):
             widgets_item.setData(widgets_data[0].get('label'), ItemRoles.TapName)
         self.set_item_widget(parent_item, row=0)
 
-    def populate_rows(self, data, row_item, row=None):
-
-        if self.has_refernce(data):
+    def resolve_refs(self,cfg_file_path, data):
+        doit = self.has_refernce(data)
+        if doit:
             for i in range(len(data)):
                 if "$" in data[i]:
                     file_name = data[i].split('$')[-1]
-                    cfg_path_rel = f"src/settings/cfg/{file_name}.json"
-                    cfg_path = os.path.join(CgDamROOT, cfg_path_rel)
+                    cfg_path_rel = f"{file_name}.json"
+                    cfg_path = os.path.join(cfg_file_path, cfg_path_rel)
 
                     if not os.path.isfile(cfg_path):
                         continue
@@ -428,9 +428,12 @@ class SettingsTree(QTreeView):
                     cfg_path = os.path.abspath(cfg_path).replace('\\', '/')
                     with open(cfg_path) as f:
                         data_list = json.load(f, object_pairs_hook=OrderedDict)
-                        data_list['reference'] = {data[i]: f'$CgDamROOT/{cfg_path_rel}'}
                         data.pop(i)
                         data.insert(i, data_list)
+        return data
+
+    def populate_rows(self, cfg_file_path, data, row_item, row=None):
+        data = self.resolve_refs(cfg_file_path, data)
 
         if not self.has_childrens(data):
             self.populate_row(data, row_item)
@@ -445,53 +448,21 @@ class SettingsTree(QTreeView):
                     row_item.insertRow(row, [child_item])
                 else:
                     row_item.appendRow([child_item])
-                self.populate_rows(child_data.get('children'), child_item)
+                self.populate_rows(cfg_file_path, child_data.get('children'), child_item)
 
     def add_rows(self, items_data):
-        # self.setItemDelegate(Delegate())
-        # for tap in items_data:
-        #     tap_item = QStandardItem()
-        #     tap_item.setText(tap)
-        #     tap_item.setData(tap, ItemRoles.TapName)
-        #
-        #     child = QStandardItem()
-        #     tap_item.appendRow([child])
-        #
-        #     children_items = items_data.get(tap)
-        #
-        #     for item in children_items:
-        #         child.setData(item, ItemRoles.SettingName)
-        #         child.setData(children_items, ItemRoles.SettingFields)
-        #
-        #         sub_children_items = children_items.get(item)
-        #
-        #         if self.fm.dict_depth(sub_children_items) > 1:
-        #             drop_item = QStandardItem()
-        #             drop_item.setText(item)
-        #             tap_item.appendRow([drop_item])
-        #
-        #             sub_child = QStandardItem()
-        #             sub_child.setData(item, ItemRoles.SettingName)
-        #             sub_child.setData(sub_children_items, ItemRoles.SettingFields)
-        #             drop_item.appendRow([sub_child])
-        #
-        #             self.set_item_widget(drop_item, row=0)
-        #
-        #
-        #
-        #     self.data_model.appendRow(tap_item)
-        #     self.set_item_widget(tap_item, row=0)
-
-        for row_data in items_data:
+        items = items_data.get('items', [])
+        cfg_file = items_data.get('file','')
+        cfg_file_path = os.path.dirname(cfg_file)
+        items = self.resolve_refs(cfg_file_path, items)
+        for row_data in items:
             row_item = QStandardItem()
-            row_item.setText(row_data.get('label'))
+            label = row_data.get('label')
+            row_item.setText(label)
             row_item.setData(row_data.get('name'), ItemRoles.TapName)
             row_item.setData(row_data, ItemRoles.SettingFields)
-
             children_data = row_data.get('children', [])
-
-            self.populate_rows(children_data, row_item)
-
+            self.populate_rows(cfg_file_path,children_data, row_item)
             self.data_model.appendRow(row_item)
             self.set_item_widget(row_item, row=0)
 

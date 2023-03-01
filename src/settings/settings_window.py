@@ -67,13 +67,18 @@ class SettingsWindow(QMainWindow):
         if settings_file.is_file():
             try:
                 with open(settings_file, "r") as f:
-                    return json.load(f, object_pairs_hook=OrderedDict)
+                    settings = json.load(f, object_pairs_hook=OrderedDict)
+                    settings["file"] = settings_file
+                    return settings
             except:
                 message(None, "Warring", "Can not read the user settings data")
                 settings_file.rename(settings_file.with_suffix('bu_djed'))
         else:
-            with open(f"{CgDamROOT}/src/settings/cfg/settings.json", "r") as f:
-                return json.load(f, object_pairs_hook=OrderedDict)
+            settings_file = f"{CgDamROOT}/src/settings/cfg/settings.json"
+            with open(settings_file, "r") as f:
+                settings = json.load(f, object_pairs_hook=OrderedDict)
+                settings["file"] = settings_file
+                return settings
 
     def init_win(self):
         title = "cgDam Settings"
@@ -98,7 +103,7 @@ class SettingsWindow(QMainWindow):
 
         # tree widget
         self.setting_tree = SettingsTree()
-        self.setting_tree.add_rows(ui_data.get('items', []))
+        self.setting_tree.add_rows(ui_data)
 
         # buttons
         l_btn = QHBoxLayout(self.cw)
@@ -127,23 +132,10 @@ class SettingsWindow(QMainWindow):
 
         # We build the menu.
         menu = QMenu(self)
-        duplicate_action = menu.addAction("Duplicate")
         print_action = menu.addAction("Print Data")
-
-        duplicate_action.triggered.connect(lambda: self.on_duplicate_item(index))
         print_action.triggered.connect(lambda: self.on_print_data(index))
 
         menu.exec_(self.setting_tree.mapToGlobal(point))
-
-    def on_duplicate_item(self, index):
-        item = self.setting_tree.data_model.itemFromIndex(index)
-        parent = item.parent()
-        data = copy.deepcopy(index.data(ItemRoles.SettingFields))
-
-        parent_data = index.parent().data(ItemRoles.SettingFields)
-        parent.parent().setData(parent_data['children'].append(data))
-
-        self.setting_tree.populate_rows([data], parent, item.row() + 1)
 
     def on_print_data(self, index):
 
@@ -227,8 +219,8 @@ class SettingsWindow(QMainWindow):
                         child_dict['value'] = value
 
         # reference json
-        if 'reference' in parent_data:
-            ref_name = f'{parent_data.get("host")}_{parent_data.get("name")}'
+        if 'path' in parent_data:
+            ref_name = f'{parent_data.get("path")}/{parent_data.get("name")}'
             parent_data['reference'] = {
                 f'{ref_name}': f'$CgDamROOT/src/settings/cfg/{ref_name}.json'
             }
