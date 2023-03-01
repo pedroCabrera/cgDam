@@ -1,15 +1,14 @@
 {
-  "host": "unreal",
-  "name": "default_mtl",
-  "label": "Default MTL",
+  "name": "autodesk_standard_surface",
+  "label": "Autodesk Standard Surface",
   "children": [
     {
       "name": "standard_surface",
       "label": "Standard Surface",
-      "default_value": "/Game/cgDam/Presets/MasterMaterials/cgDam_defaultMTL",
-      "value": "/Game/cgDam/Presets/MasterMaterials/cgDam_defaultMTL",
+      "default_value": "MaterialPhysicalAutodeskStandardSurface",
+      "value": "MaterialPhysicalAutodeskStandardSurface",
       "type": "input_text",
-      "tooltip": "The master material game path",
+      "tooltip": "",
       "placeholder": ""
     },
     {
@@ -21,12 +20,10 @@
           "name": "base",
           "label": "Base",
           "value": {
-            "name": "",
+            "name": "base_weight",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
@@ -36,201 +33,239 @@
             "name": "base_color",
             "type": "color",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "metallic",
           "label": "Metallic",
           "value": {
-            "name": "metallic",
+            "name": "metalness",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "normal",
           "label": "Normal",
           "value": {
-            "name": "normal",
+            "name": "normal_input",
             "type": "vector3",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{"name": "_normal","type": "TextureNormalMap", "inplug": "input", "outplug": ""}]
           }
         },
         {
           "name": "specular",
           "label": "Specular",
           "value": {
-            "name": "",
+            "name": "specular_weight",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "roughness",
           "label": "Roughness",
           "value": {
-            "name": "roughness",
+            "name": "specular_roughness",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "transmission",
           "label": "Transmission",
           "value": {
-            "name": "",
+            "name": "transmission_weight",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "specular_color",
           "label": "Specular Color",
           "value": {
-            "name": "",
+            "name": "specular_color",
             "type": "color",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "transmission_color",
           "label": "Transmission Color",
           "value": {
-            "name": "",
+            "name": "transmission_color",
             "type": "color",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "subsurface",
           "label": "Subsurface",
           "value": {
-            "name": "",
+            "name": "subsurface_weight",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "subsurface_color",
           "label": "Subsurface Color",
           "value": {
-            "name": "",
+            "name": "subsurface_color",
             "type": "color",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "subsurface_radius",
           "label": "Subsurface Radius",
           "value": {
-            "name": "",
+            "name": "subsurface_radius",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "coat",
           "label": "Coat",
           "value": {
-            "name": "",
+            "name": "coat_weight",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "sheen",
           "label": "Sheen",
           "value": {
-            "name": "",
+            "name": "sheen_weight",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "sheen_color",
           "label": "Sheen color",
           "value": {
-            "name": "",
+            "name": "sheen_color",
             "type": "color",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "emission",
           "label": "Emission",
           "value": {
-            "name": "",
+            "name": "emission_weight",
             "type": "float",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "emission_color",
           "label": "Emission Color",
           "value": {
-            "name": "",
+            "name": "emission_color",
             "type": "color",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
           }
         },
         {
           "name": "opacity",
           "label": "Opacity",
           "value": {
-            "name": "",
+            "name": "opacity",
             "type": "color",
             "plug": "input",
-            "inbetween": [
-              {}
-            ]
+            "inbetween": [{}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "displacement",
+      "label": "Displacement",
+      "default_value": "Displacement",
+      "value": "Displacement",
+      "type": "input_text",
+      "tooltip": "",
+      "placeholder": ""
+    },
+    {
+      "name": "displacement_plugs",
+      "label": "Displacement Plugs",
+      "type": "table_field",
+      "data": [
+        {
+          "name": "displacement",
+          "label": "Displacement",
+          "value": {
+            "name": "front_value",
+            "type": "float",
+            "plug": "input",
+            "inbetween": [{}]
+          }
+        },
+        {
+          "name": "displacement",
+          "label": "Displacement",
+          "value": {
+            "name": "",
+            "type": "",
+            "plug": "",
+            "inbetween": [{}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "normal_map",
+      "label": "Normal Map",
+      "default_value": "TextureNormalMap",
+      "value": "TextureNormalMap",
+      "type": "input_text",
+      "tooltip": "",
+      "placeholder": ""
+    },
+    {
+      "name": "normal_map_plugs",
+      "label": "Normal Map Plugs",
+      "type": "table_field",
+      "data": [
+        {
+          "name": "input",
+          "label": "Input",
+          "value": {
+            "name": "input",
+            "type": "vector3",
+            "plug": "input",
+            "inbetween": [{}]
+          }
+        },
+        {
+          "name": "out_value",
+          "label": "out Value",
+          "value": {
+            "name": "",
+            "type": "",
+            "plug": "",
+            "inbetween": [{}]
           }
         }
       ]

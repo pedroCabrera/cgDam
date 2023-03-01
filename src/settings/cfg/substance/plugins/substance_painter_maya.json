@@ -1,0 +1,41 @@
+{
+  "name": "substance_painter_maya",
+  "label": "Substance Painter Maya",
+  "children": [
+    {
+      "name": "geometry_type",
+      "label": "Geometry Type",
+      "menu_items": [
+        "<none>",
+        "Import Geometry"
+      ],
+      "default_value": "<none>",
+      "value": "<none>",
+      "type": "drop_menu",
+      "tooltip": "The type to geometry to create in maya, <none> to import material only"
+    },
+    {
+      "name": "use_material",
+      "label": "Use Material",
+      "menu_items": [
+        "arnold"
+      ],
+      "default_value": "arnold",
+      "value": "arnold",
+      "type": "drop_menu",
+      "tooltip": "Convert material to renderer in maya"
+    },
+    {
+      "name": "colorspace",
+      "label": "Colorspace",
+      "menu_items": [
+        "sRGB",
+        "ACES"
+      ],
+      "default_value": "ACES",
+      "value": "ACES",
+      "type": "drop_menu",
+      "tooltip": "The colorspace of textures in clarisse"
+    }
+  ]
+}

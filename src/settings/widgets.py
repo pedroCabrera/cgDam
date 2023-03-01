@@ -361,21 +361,6 @@ class StyledItemDelegate(QStyledItemDelegate):
             return editor
         return super(StyledItemDelegate, self).createEditor(parent, option, index)
 
-    # def setEditorData(self, editor, index):
-    #     if not index.isValid(): return
-    #     if self.model_indices and index in self.model_indices:
-    #         txt = index.model().data(index, Qt.EditRole)
-    #         if isinstance(txt, str):
-    #             editor.setText(txt)
-    #     else:
-    #         super().setEditorData(editor, index)
-
-    # def setModelData(self, editor, model, index):
-    #     if self.model_indices and index in self.model_indices:
-    #         model.setData(index, editor.text(), Qt.EditRole)
-    #     else:
-    #         super().setModelData(editor, model, index)
-
     def updateEditorGeometry(self, editor, option, index):
         editor.setContentsMargins(0, 0, 0, 0)
         editor.setGeometry(option.rect)
@@ -399,12 +384,6 @@ class SettingsTree(QTreeView):
                 return True
         return False
 
-    def has_refernce(self, data):
-        for item in data:
-            if isinstance(item, str) and ('$' in item):
-                return True
-        return False
-
     def populate_row(self, widgets_data, parent_item):
         widgets_item = QStandardItem()
         parent_item.appendRow([widgets_item])
@@ -413,28 +392,7 @@ class SettingsTree(QTreeView):
             widgets_item.setData(widgets_data[0].get('label'), ItemRoles.TapName)
         self.set_item_widget(parent_item, row=0)
 
-    def resolve_refs(self,cfg_file_path, data):
-        doit = self.has_refernce(data)
-        if doit:
-            for i in range(len(data)):
-                if "$" in data[i]:
-                    file_name = data[i].split('$')[-1]
-                    cfg_path_rel = f"{file_name}.json"
-                    cfg_path = os.path.join(cfg_file_path, cfg_path_rel)
-
-                    if not os.path.isfile(cfg_path):
-                        continue
-
-                    cfg_path = os.path.abspath(cfg_path).replace('\\', '/')
-                    with open(cfg_path) as f:
-                        data_list = json.load(f, object_pairs_hook=OrderedDict)
-                        data.pop(i)
-                        data.insert(i, data_list)
-        return data
-
-    def populate_rows(self, cfg_file_path, data, row_item, row=None):
-        data = self.resolve_refs(cfg_file_path, data)
-
+    def populate_rows(self, data, row_item, row=None):
         if not self.has_childrens(data):
             self.populate_row(data, row_item)
 
@@ -448,21 +406,17 @@ class SettingsTree(QTreeView):
                     row_item.insertRow(row, [child_item])
                 else:
                     row_item.appendRow([child_item])
-                self.populate_rows(cfg_file_path, child_data.get('children'), child_item)
+                self.populate_rows( child_data.get('children'), child_item)
 
     def add_rows(self, items_data):
-        items = items_data.get('items', [])
-        cfg_file = items_data.get('file','')
-        cfg_file_path = os.path.dirname(cfg_file)
-        items = self.resolve_refs(cfg_file_path, items)
-        for row_data in items:
+        for row_data in items_data:
             row_item = QStandardItem()
             label = row_data.get('label')
             row_item.setText(label)
             row_item.setData(row_data.get('name'), ItemRoles.TapName)
             row_item.setData(row_data, ItemRoles.SettingFields)
             children_data = row_data.get('children', [])
-            self.populate_rows(cfg_file_path,children_data, row_item)
+            self.populate_rows(children_data, row_item)
             self.data_model.appendRow(row_item)
             self.set_item_widget(row_item, row=0)
 

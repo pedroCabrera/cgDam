@@ -1,13 +1,12 @@
 {
-  "host": "maya",
-  "name": "arnold",
-  "label": "Arnold",
+  "name": "disney",
+  "label": "Disney",
   "children": [
     {
       "name": "standard_surface",
       "label": "Standard Surface",
-      "default_value": "aiStandardSurface",
-      "value": "aiStandardSurface",
+      "default_value": "MaterialPhysicalDisneyPrincipled",
+      "value": "MaterialPhysicalDisneyPrincipled",
       "type": "input_text",
       "tooltip": "",
       "placeholder": ""
@@ -21,7 +20,7 @@
           "name": "base",
           "label": "Base",
           "value": {
-            "name": "base",
+            "name": "base_multiply",
             "type": "float",
             "plug": "input",
             "inbetween": [{}]
@@ -31,7 +30,7 @@
           "name": "base_color",
           "label": "Base Color",
           "value": {
-            "name": "baseColor",
+            "name": "base_color",
             "type": "color",
             "plug": "input",
             "inbetween": [{}]
@@ -41,7 +40,7 @@
           "name": "metallic",
           "label": "Metallic",
           "value": {
-            "name": "metalness",
+            "name": "metallic",
             "type": "float",
             "plug": "input",
             "inbetween": [{}]
@@ -51,10 +50,10 @@
           "name": "normal",
           "label": "Normal",
           "value": {
-            "name": "normalCamera",
+            "name": "normal_input",
             "type": "vector3",
             "plug": "input",
-            "inbetween": [{"name": "_normal","type": "aiNormalMap", "inplug": "input", "outplug": "outValue"}]
+            "inbetween": [{"name": "_normal","type": "TextureNormalMap", "inplug": "input", "outplug": ""}]
           }
         },
         {
@@ -71,7 +70,7 @@
           "name": "roughness",
           "label": "Roughness",
           "value": {
-            "name": "specularRoughness",
+            "name": "roughness",
             "type": "float",
             "plug": "input",
             "inbetween": [{}]
@@ -91,7 +90,7 @@
           "name": "specular_color",
           "label": "Specular Color",
           "value": {
-            "name": "specularColor",
+            "name": "specular_color",
             "type": "color",
             "plug": "input",
             "inbetween": [{}]
@@ -101,7 +100,7 @@
           "name": "transmission_color",
           "label": "Transmission Color",
           "value": {
-            "name": "transmissionColor",
+            "name": "transmission_color",
             "type": "color",
             "plug": "input",
             "inbetween": [{}]
@@ -121,7 +120,7 @@
           "name": "subsurface_color",
           "label": "Subsurface Color",
           "value": {
-            "name": "subsurfaceColor",
+            "name": "subsurface_color",
             "type": "color",
             "plug": "input",
             "inbetween": [{}]
@@ -131,7 +130,7 @@
           "name": "subsurface_radius",
           "label": "Subsurface Radius",
           "value": {
-            "name": "subsurfaceRadius",
+            "name": "subsurface_radius",
             "type": "float",
             "plug": "input",
             "inbetween": [{}]
@@ -141,7 +140,7 @@
           "name": "coat",
           "label": "Coat",
           "value": {
-            "name": "coat",
+            "name": "clear_coat",
             "type": "float",
             "plug": "input",
             "inbetween": [{}]
@@ -161,7 +160,7 @@
           "name": "sheen_color",
           "label": "Sheen color",
           "value": {
-            "name": "sheencolor",
+            "name": "sheen_color",
             "type": "color",
             "plug": "input",
             "inbetween": [{}]
@@ -181,7 +180,7 @@
           "name": "emission_color",
           "label": "Emission Color",
           "value": {
-            "name": "emissioncolor",
+            "name": "emission_color",
             "type": "color",
             "plug": "input",
             "inbetween": [{}]
@@ -202,8 +201,8 @@
     {
       "name": "displacement",
       "label": "Displacement",
-      "default_value": "displacementShader",
-      "value": "displacementShader",
+      "default_value": "Displacement",
+      "value": "Displacement",
       "type": "input_text",
       "tooltip": "",
       "placeholder": ""
@@ -217,7 +216,7 @@
           "name": "displacement",
           "label": "Displacement",
           "value": {
-            "name": "displacement",
+            "name": "front_value",
             "type": "float",
             "plug": "input",
             "inbetween": [{}]
@@ -227,7 +226,7 @@
           "name": "displacement",
           "label": "Displacement",
           "value": {
-            "name": "displacement",
+            "name": "",
             "type": "float",
             "plug": "output",
             "inbetween": [{}]
@@ -238,8 +237,8 @@
     {
       "name": "normal_map",
       "label": "Normal Map",
-      "default_value": "aiNormalMap",
-      "value": "aiNormalMap",
+      "default_value": "TextureNormalMap",
+      "value": "TextureNormalMap",
       "type": "input_text",
       "tooltip": "",
       "placeholder": ""
@@ -263,9 +262,9 @@
           "name": "out_value",
           "label": "out Value",
           "value": {
-            "name": "outValue",
-            "type": "vector3",
-            "plug": "output",
+            "name": "",
+            "type": "",
+            "plug": "",
             "inbetween": [{}]
           }
         }

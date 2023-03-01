@@ -1,0 +1,90 @@
+{
+  "name": "clarisse",
+  "label": "Clarisse",
+  "children": [
+    {
+      "name": "configuration",
+      "label": "Configuration",
+      "children": [
+        {
+          "name": "executable",
+          "label": "Executable",
+          "default_value": "C:/Program Files/Isotropix/Clarisse 5.0 SP8/Clarisse/clarisse.exe",
+          "value": "C:/Program Files/Isotropix/Clarisse 5.0 SP8/Clarisse/clarisse.exe",
+          "type": "input_text",
+          "tooltip": "clarisse executable path",
+          "placeholder": "e.g. 'C:/Program Files/Isotropix/Clarisse 5.0 SP8/Clarisse/clarisse.exe'"
+        },
+        {
+          "name": "command_port",
+          "label": "Command Port",
+          "default_value": 55000,
+          "value": 55000,
+          "type": "input_text",
+          "tooltip": "Clarisse command port number to communicate with another programs",
+          "placeholder": "e.g. '55000'"
+        },
+        {
+          "name": "asset_root",
+          "label": "Asset Root",
+          "default_value": "build://project/Assets/$assetName",
+          "value": "build://project/Assets/$assetName",
+          "type": "input_text",
+          "tooltip": "The directory root of in which the assets imported",
+          "placeholder": "e.g. 'build://project/Assets/$assetName'"
+        },
+        {
+          "name": "geometry_root",
+          "label": "Geometry Root",
+          "default_value": "../geos",
+          "value": "../geos",
+          "type": "input_text",
+          "tooltip": "The directory root of clarisse in which the geometry created.\n '../' mean relative to asset root",
+          "placeholder": "e.g. '../geos'"
+        },
+        {
+          "name": "material_root",
+          "label": "Material Root",
+          "default_value": "../mtls",
+          "value": "../mtls",
+          "type": "input_text",
+          "tooltip": "The directory root of clarisse in which the materials created.\n '../' mean relative to asset root",
+          "placeholder": "e.g. '../mtls'"
+        },
+        {
+          "name": "texture_root",
+          "label": "Texture Root",
+          "default_value": "../mtls/texs",
+          "value": "../mtls/texs",
+          "type": "input_text",
+          "tooltip": "The directory root of clarisse in which the textures created.\n '../' mean relative to asset root",
+          "placeholder": "e.g. '../mtls/texs'"
+        },
+        {
+          "name": "utils_root",
+          "label": "Utils Root",
+          "default_value": "../mtls/utils",
+          "value": "../mtls/utils",
+          "type": "input_text",
+          "tooltip": "The directory root of clarisse in which the material utilities created.\n '../' mean relative to asset root",
+          "placeholder": "e.g. '../mtls/utils'"
+        }
+      ]
+    },
+    {
+      "name": "plugins",
+      "label": "Plugins",
+      "children": [
+            "$clarisse/plugins/material_from_textures"
+      ]
+    },
+    {
+      "name": "renderers",
+      "label": "Renderers",
+      "children": [
+        "$clarisse/renderers/clarisse_autodesk_standard_surface",
+        "$clarisse/renderers/clarisse_disney"
+      ]
+    }
+  ]
+}

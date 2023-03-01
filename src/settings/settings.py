@@ -282,7 +282,7 @@ if __name__ == '__main__':
     else:
         app = QApplication.instance()
     #print(get_value('plugins', 'general', 'dcc','maya'))#.get('children', [])
-    a = get_resolved_settings(get_settings_data())
+    a = get_settings_data()
     print(json.dumps(a[0],indent=4))
     save_encoded_cfg_data(a,path=user_settings_dir)
     print("encoded")

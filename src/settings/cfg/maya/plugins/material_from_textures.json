@@ -1,0 +1,53 @@
+{
+  "name": "material_from_textures",
+  "label": "Material From Textures",
+  "children": [
+    {
+      "name": "textures_directory",
+      "label": "Textures Directory",
+      "default_value": "$project/Texture",
+      "value": "$project/Texture",
+      "type": "input_text",
+      "tooltip": "The directory of textures",
+      "placeholder": "e.g. '$project/Texture'"
+    },
+    {
+      "name": "renderer",
+      "label": "Renderer",
+      "default_value": "Arnold",
+      "value": "Arnold",
+      "type": "input_text",
+      "tooltip": "The render to create materials belongs it",
+      "placeholder": "e.g. Arnold"
+    },
+    {
+      "name": "materials",
+      "label": "Materials",
+      "default_value": "All",
+      "value": "All",
+      "type": "input_text",
+      "tooltip": "Import specific materials form the texture directory\n, It list the available materials dynamically based on textures naming conventional",
+      "placeholder": "e.g. 'All'"
+    },
+    {
+      "name": "colorspace",
+      "label": "Colorspace",
+      "menu_items": [
+        "sRGB",
+        "ACES"
+      ],
+      "default_value": "ACES",
+      "value": "ACES",
+      "type": "drop_menu",
+      "tooltip": "The colorspace of textures in clarisse"
+    },
+    {
+      "name": "udim",
+      "label": "UDIM",
+      "default_value": true,
+      "value": true,
+      "type": "toggle_box",
+      "tooltip": "To create textures with udims"
+    }
+  ]
+}

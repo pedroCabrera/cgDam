@@ -1,39 +1,371 @@
 {
   "items": [
     {
-        "name": "general",
-        "label": "General",
-        "children": [
-          {
-            "name": "textures",
-            "label": "Textures",
-            "children": [
-              {
-                "name": "colorspace",
-                "label": "Colorspace",
-                "children": [
-                  {
-                    "name": "aces_color_hdr",
-                    "label": "ACES Color HDR",
-                    "default_value": "Utility - Linear - sRGB",
-                    "value": "Utility - Linear - sRGB",
-                    "type": "input_text",
-                    "tooltip": "The high dynamic range textures color colorspace",
-                    "placeholder": "e.g. 'Utility - Linear - sRGB'"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
+      "name": "general",
+      "label": "General",
+      "children": [
+        {
+          "name": "textures",
+          "label": "Textures",
+          "children": [
+            {
+              "name": "colorspace",
+              "label": "Colorspace",
+              "children": [
+                {
+                  "name": "aces_color_hdr",
+                  "label": "ACES Color HDR",
+                  "default_value": "Utility - Linear - sRGB",
+                  "value": "Utility - Linear - sRGB",
+                  "type": "input_text",
+                  "tooltip": "The high dynamic range textures color colorspace",
+                  "placeholder": "e.g. 'Utility - Linear - sRGB'"
+                },
+                {
+                  "name": "aces_color_ldr",
+                  "label": "ACES Color LDR",
+                  "default_value": "Utility - sRGB - Texture",
+                  "value": "Utility - sRGB - Texture",
+                  "type": "input_text",
+                  "tooltip": "The low dynamic range textures color colorspace",
+                  "placeholder": "e.g. 'Utility - sRGB - Texture'"
+                },
+                {
+                  "name": "aces_raw",
+                  "label": "ACES RAW",
+                  "default_value": "Utility - Raw",
+                  "value": "Utility - Raw",
+                  "type": "input_text",
+                  "tooltip": "The texture data colorspace",
+                  "placeholder": "e.g. 'Utility - Raw'"
+                },
+                {
+                  "name": "srgb",
+                  "label": "sRGB",
+                  "default_value": "sRGB",
+                  "value": "sRGB",
+                  "type": "input_text",
+                  "tooltip": "The texture color sRGB colorspace",
+                  "placeholder": "e.g. 'sRGB'"
+                },
+                {
+                  "name": "raw",
+                  "label": "Raw",
+                  "default_value": "Raw",
+                  "value": "Raw",
+                  "type": "input_text",
+                  "tooltip": "The texture color raw colorspace",
+                  "placeholder": "e.g. 'Raw'"
+                }
+              ]
+            },
+            {
+              "name": "patterns",
+              "label": "Patterns",
+              "children": [
+                {
+                  "name": "extensions",
+                  "label": "Extensions",
+                  "default_value": [
+                    "exr",
+                    "png",
+                    "jpg",
+                    "jpeg",
+                    "tif"
+                  ],
+                  "value": [
+                    "exr",
+                    "png",
+                    "jpg",
+                    "jpeg",
+                    "tif"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The acceptable textures extensions",
+                  "placeholder": "e.g. '[\"exr\", \"png\", \"jpg\", \"jpeg\", \"tif\", ..]'"
+                },
+                {
+                  "name": "hdr_extension",
+                  "label": "HDR Extensions",
+                  "default_value": [
+                    "exr",
+                    "hdri",
+                    "hdr"
+                  ],
+                  "value": [
+                    "exr",
+                    "hdri",
+                    "hdr"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The acceptable high dynamic range textures extensions",
+                  "placeholder": "e.g. '[\"exr\", \"hdri\", \"hdr\", ..]'"
+                },
+                {
+                  "name": "base_color",
+                  "label": "Base Color",
+                  "default_value": [
+                    "(?i)base.*color",
+                    "(?i)diffuse",
+                    "(?i)albedo"
+                  ],
+                  "value": [
+                    "(?i)base.*color",
+                    "(?i)diffuse",
+                    "(?i)albedo"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The base color textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)base.*color\", \"(?i)diffuse\", \"(?i)albedo\", ..]'"
+                },
+                {
+                  "name": "metallic",
+                  "label": "Metallic",
+                  "default_value": [
+                    "(?i)metallic",
+                    "(?i)metalness"
+                  ],
+                  "value": [
+                    "(?i)metallic",
+                    "(?i)metalness"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The metallic textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)metallic\", \"(?i)metalness\", ..]'"
+                },
+                {
+                  "name": "roughness",
+                  "label": "Roughness",
+                  "default_value": [
+                    "(?i)roughness",
+                    "(?i)glossinss"
+                  ],
+                  "value": [
+                    "(?i)roughness",
+                    "(?i)glossinss"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The roughness textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)roughness\", \"(?i)glossinss\", ...]'"
+                },
+                {
+                  "name": "specular_weight",
+                  "label": "Specular Weight",
+                  "default_value": [
+                    "(?i)specular"
+                  ],
+                  "value": [
+                    "(?i)specular"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The specular weight textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)specular\", ...]'"
+                },
+                {
+                  "name": "specular_color",
+                  "label": "Specular Color",
+                  "default_value": [
+                    "(?i)specular.*color"
+                  ],
+                  "value": [
+                    "(?i)specular.*color"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The specular color textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)specular.*color\", \"(?i)specularcolor\", ...]'"
+                },
+                {
+                  "name": "transmission_weight",
+                  "label": "Transmission Weight",
+                  "default_value": [
+                    "(?i)transmission"
+                  ],
+                  "value": [
+                    "(?i)transmission"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The transmission weight textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)transmission\", ..]'"
+                },
+                {
+                  "name": "transmission_color",
+                  "label": "Transmission Color",
+                  "default_value": [
+                    "(?i)transmission.*color"
+                  ],
+                  "value": [
+                    "(?i)transmission.*color"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The transmission color textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)transmission.*color\", ..]'"
+                },
+                {
+                  "name": "subsurface_scattering_weight",
+                  "label": "Subsurface Scattering Weight",
+                  "default_value": [
+                    "(?i)scattering"
+                  ],
+                  "value": [
+                    "(?i)scattering"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The subsurface scattering weight textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)scattering\", ..]'"
+                },
+                {
+                  "name": "subsurface_scattering_color",
+                  "label": "Subsurface Scattering Color",
+                  "default_value": [
+                    "(?i)scattering.*color"
+                  ],
+                  "value": [
+                    "(?i)scattering.*color"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The subsurface scattering color textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)scattering.*color\", ..]'"
+                },
+                {
+                  "name": "sheen_weight",
+                  "label": "Sheen Weight",
+                  "default_value": [
+                    "(?i)sheen"
+                  ],
+                  "value": [
+                    "(?i)sheen"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The sheen weight textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)sheen\", ..]'"
+                },
+                {
+                  "name": "sheen_color",
+                  "label": "Sheen Color",
+                  "default_value": [
+                    "(?i)sheen.*color"
+                  ],
+                  "value": [
+                    "(?i)sheen.*color"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The sheen color textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)sheen.*color\", ..]'"
+                },
+                {
+                  "name": "coat_weight",
+                  "label": "Coat Weight",
+                  "default_value": [
+                    "(?i)coat"
+                  ],
+                  "value": [
+                    "(?i)coat"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The coat weight textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)coat\", ..]'"
+                },
+                {
+                  "name": "coat_color",
+                  "label": "Coat Color",
+                  "default_value": [
+                    "(?i)coat.*color"
+                  ],
+                  "value": [
+                    "(?i)coat.*color"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The coat color textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)coat.*color\", ..]'"
+                },
+                {
+                  "name": "emission_weight",
+                  "label": "Emission Weight",
+                  "default_value": [
+                    "(?i)emission"
+                  ],
+                  "value": [
+                    "(?i)emission"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The emission weight textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)emission\", ..]'"
+                },
+                {
+                  "name": "emission_color",
+                  "label": "Emission Color",
+                  "default_value": [
+                    "(?i)emission.*color"
+                  ],
+                  "value": [
+                    "(?i)emission.*color"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The emission color textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)emission.*color\", ..]'"
+                },
+                {
+                  "name": "normal",
+                  "label": "Normal",
+                  "default_value": [
+                    "(?i)normal"
+                  ],
+                  "value": [
+                    "(?i)normal"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The normal textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)normal\", ...]'"
+                },
+                {
+                  "name": "opacity",
+                  "label": "Opacity",
+                  "default_value": [
+                    "(?i)opacity"
+                  ],
+                  "value": [
+                    "(?i)opacity"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The metallic textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)opacity\", ..]'"
+                },
+                {
+                  "name": "height",
+                  "label": "Height",
+                  "default_value": [
+                    "(?i)height",
+                    "(?i)bump",
+                    "(?i)displacement"
+                  ],
+                  "value": [
+                    "(?i)height",
+                    "(?i)bump",
+                    "(?i)displacement"
+                  ],
+                  "type": "input_text",
+                  "tooltip": "The metallic textures patterns of material",
+                  "placeholder": "e.g. '[\"(?i)height\", \"(?i)bump\", \"(?i)displacement\", ..]'"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
       {
         "name": "dcc",
         "label": "Dcc Connectors",
         "children": [
-            "$maya/maya"  
+            "$maya/maya",
+            "$clarisse/clarisse",
+            "$substance/substance_painter",
+            "$unreal/unreal"
         ]
-      } 
-    
+      },
+      {
+        "name": "end",
+        "label": "End"
+      }    
   ]
 }

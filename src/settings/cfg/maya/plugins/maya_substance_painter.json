@@ -1,0 +1,81 @@
+{
+  "name": "maya_substance_painter",
+  "label": "Maya Substance Painter",
+  "children": [
+    {
+      "name": "export_root",
+      "label": "Export Root",
+      "default_value": "../Export/$selection",
+      "value": "../Export/$selection",
+      "type": "input_text",
+      "tooltip": "The directory in which the maya will export geometry\\n relatives to maya file\"",
+      "placeholder": "e.g. '../Export/$selection'"
+    },
+    {
+      "name": "default_texture_resolution",
+      "label": "Default Texture Resolution",
+      "menu_items": [
+        "512",
+        "1024",
+        "2048",
+        "4096"
+      ],
+      "default_value": "1024",
+      "value": "1024",
+      "type": "drop_menu",
+      "tooltip": "The default texture resolution to open substance painter with it"
+    },
+    {
+      "name": "normal_map_format",
+      "label": "Normal Map Format",
+      "menu_items": [
+        "OpenGL",
+        "DirectX"
+      ],
+      "default_value": "OpenGL",
+      "value": "OpenGl",
+      "type": "drop_menu",
+      "tooltip": "The normal format"
+    },
+    {
+      "name": "tangent_space_mode",
+      "label": "Tangent Space Mode",
+      "menu_items": [
+        "PerVertex",
+        "PerFragment"
+      ],
+      "default_value": "PerVertex",
+      "value": "PerVertex",
+      "type": "drop_menu",
+      "tooltip": "The tangent space mode"
+    },
+    {
+      "name": "project_workflow",
+      "label": "Project Workflow",
+      "menu_items": [
+        "TextureSetPerUVTile",
+        "UVTile"
+      ],
+      "default_value": "UVTile",
+      "value": "UVTile",
+      "type": "drop_menu",
+      "tooltip": "The project workflow use UDIM or materials workflow"
+    },
+    {
+      "name": "import_cameras",
+      "label": "Import Cameras",
+      "default_value": false,
+      "value": false,
+      "type": "toggle_box",
+      "tooltip": "import camera in substance painter"
+    },
+    {
+      "name": "use_latest_publish",
+      "label": "Use Latest Publish",
+      "default_value": false,
+      "value": false,
+      "type": "toggle_box",
+      "tooltip": "Use the latest published geometry"
+    }
+  ]
+}

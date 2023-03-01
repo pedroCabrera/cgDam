@@ -1,0 +1,79 @@
+{
+  "name": "substance_painter",
+  "label": "Substance Painter",
+  "children": [
+    {
+      "name": "configuration",
+      "label": "Configuration",
+      "children": [
+        {
+          "name": "executable",
+          "label": "Executable",
+          "default_value": "C:/Program Files/Adobe/Adobe Substance 3D Painter/Adobe Substance 3D Painter.exe",
+          "value": "C:/Program Files/Adobe/Adobe Substance 3D Painter/Adobe Substance 3D Painter.exe",
+          "type": "input_text",
+          "tooltip": "Maya executable path",
+          "placeholder": "e.g. C:/Program Files/Adobe/Adobe Substance 3D Painter/Adobe Substance 3D Painter.exe"
+        },
+        {
+          "name": "spp_save_directory",
+          "label": "SPP save directory",
+          "default_value": "../sur/substance",
+          "value": "../sur/substance",
+          "type": "input_text",
+          "tooltip": "The directory in which the spp file will be saves\n relatives to the source file (like maya file)",
+          "placeholder": "e.g. ../sur/substance"
+        },
+        {
+          "name": "use_latest_textures",
+          "label": "Use Latest Textures",
+          "default_value": false,
+          "value": false,
+          "type": "toggle_box",
+          "tooltip": "To use the latest exported textures of substance painter"
+        }
+      ]
+    },
+    {
+      "name": "texture_export",
+      "label": "Texture Export",
+      "children": [
+        {
+          "name": "path",
+          "label": "Path",
+          "default_value": "../textures",
+          "value": "../textures",
+          "type": "input_text",
+          "tooltip": "The directory in which the spp file will be saves\n relatives to the texturing file",
+          "placeholder": "e.g. \"../textures\""
+        },
+        {
+          "name": "preset",
+          "label": "Preset",
+          "default_value": "Arnold (AiStandard)",
+          "value": "Arnold (AiStandard)",
+          "type": "input_text",
+          "tooltip": "The presets of exporting textures",
+          "placeholder": "e.g. Arnold (AiStandard)"
+        },
+        {
+          "name": "format",
+          "label": "Format",
+          "default_value": "png",
+          "value": "png",
+          "type": "input_text",
+          "tooltip": "The format of export textures",
+          "placeholder": "e.g. png"
+        }
+      ]
+    },
+    {
+      "name": "plugins",
+      "label": "Plugins",
+      "children": [
+            "$substance/plugins/substance_painter_maya",
+            "$substance/plugins/substance_painter_clarisse"
+      ]
+    }
+  ]
+}

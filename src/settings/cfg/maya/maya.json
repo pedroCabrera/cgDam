@@ -1,7 +1,6 @@
 {
   "name": "maya",
   "label": "Maya",
-  "path" :"maya/maya",
   "children": [
     {
       "name": "configuration",
@@ -15,14 +14,35 @@
           "type": "input_text",
           "tooltip": "Maya executable path",
           "placeholder": "e.g. 'C:/Program Files/Autodesk/Maya2023/bin/maya.exe'"
+        },
+        {
+          "name": "command_port",
+          "label": "Command Port",
+          "default_value": 4436,
+          "value": 4436,
+          "type": "input_text",
+          "tooltip": "Maya command port number to communicate with another programs",
+          "placeholder": "e.g. '4436'"
+        },
+        {
+          "name": "export_dir",
+          "label": "Export Directory",
+          "default_value": "../Export/$selection",
+          "value": "../Export/$selection",
+          "type": "input_text",
+          "tooltip": "The export path to export in relatives to the current file",
+          "placeholder": "e.g. '../Export/$selection'"
         }
       ]
-    },
+    },    
     {
         "name": "plugins",
         "label": "Plugins",
         "children": [
-          "$maya/plugins/export_geometry"
+          "$maya/plugins/export_geometry",
+          "$maya/plugins/material_from_textures",
+          "$maya/plugins/maya_clarisse",
+          "$maya/plugins/maya_unreal"
         ]
     }
     ,

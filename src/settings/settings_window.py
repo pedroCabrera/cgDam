@@ -27,6 +27,7 @@ for sysPath in sysPaths:
 from utils.file_manager import FileManager
 from utils.dialogs import message
 from settings.widgets import *
+from settings.settings import *
 
 from utils.resources.stylesheet import get_stylesheet
 from utils.resources.style_rc import *
@@ -61,25 +62,6 @@ class SettingsWindow(QMainWindow):
 
         self.mousePressEvent = self.showEvent
 
-    def get_settings_data(self):
-
-        settings_file = user_settings.joinpath(f'settings.json')
-        if settings_file.is_file():
-            try:
-                with open(settings_file, "r") as f:
-                    settings = json.load(f, object_pairs_hook=OrderedDict)
-                    settings["file"] = settings_file
-                    return settings
-            except:
-                message(None, "Warring", "Can not read the user settings data")
-                settings_file.rename(settings_file.with_suffix('bu_djed'))
-        else:
-            settings_file = f"{CgDamROOT}/src/settings/cfg/settings.json"
-            with open(settings_file, "r") as f:
-                settings = json.load(f, object_pairs_hook=OrderedDict)
-                settings["file"] = settings_file
-                return settings
-
     def init_win(self):
         title = "cgDam Settings"
 
@@ -94,7 +76,7 @@ class SettingsWindow(QMainWindow):
         self.setStyleSheet(get_stylesheet())
 
         # Update table
-        ui_data = self.get_settings_data()
+        ui_data = json.loads(json.dumps(get_settings_data()),object_pairs_hook=OrderedDict)
         self.cw = QWidget(self)
         self.setCentralWidget(self.cw)
 
@@ -143,8 +125,8 @@ class SettingsWindow(QMainWindow):
         item_data = index.data(ItemRoles.SettingFields)
         parent_data = index.parent().data(ItemRoles.SettingFields)
 
-        print('item data : ', item_data)
-        print('parent data : ', parent_data)
+        print('item data : ', json.dumps(item_data,indent=4))
+        print('parent data : ', json.dumps(parent_data,indent=4))
 
     def on_save(self):
 
@@ -157,10 +139,11 @@ class SettingsWindow(QMainWindow):
         for row in range(root.rowCount()):
             row_item = root.child(row, 0)
             name, row_data = row_item.data(ItemRoles.TapName), row_item.data(ItemRoles.SettingFields)
-            self.subscribe_data_with_variable(row_data)
+            #self.subscribe_data_with_variable(row_data)
             all_data.append(row_data)
-
-        fm.write_json(user_settings.joinpath(f'settings.json'), OrderedDict([('items', all_data)]))
+        print(json.dumps(all_data,indent=4))
+        save_encoded_cfg_data(all_data,path=user_settings)
+        #fm.write_json(user_settings.joinpath(f'settings.json'), OrderedDict([('items', all_data)]))
 
     def subscribe_data_with_variable(self, data):
         # TO replace the dictionary with its file name
@@ -184,7 +167,7 @@ class SettingsWindow(QMainWindow):
                 key = list(reference_dict.keys())[0]
                 children[i] = f'${key}'
             else:
-                print(child_data)
+                #print(child_data)
                 self.subscribe_data_with_variable(child_data)
 
     def get_data(self, item):
@@ -219,12 +202,12 @@ class SettingsWindow(QMainWindow):
                         child_dict['value'] = value
 
         # reference json
-        if 'path' in parent_data:
-            ref_name = f'{parent_data.get("path")}/{parent_data.get("name")}'
-            parent_data['reference'] = {
-                f'{ref_name}': f'$CgDamROOT/src/settings/cfg/{ref_name}.json'
-            }
-            fm.write_json(user_settings.joinpath(f'{ref_name}.json'), parent_data)
+        #if 'path' in parent_data:
+        #    ref_name = f'{parent_data.get("path")}/{parent_data.get("name")}'
+        #    parent_data['reference'] = {
+        #        f'{ref_name}': f'$CgDamROOT/src/settings/cfg/{ref_name}.json'
+        #    }
+        #    #fm.write_json(user_settings.joinpath(f'{ref_name}.json'), parent_data)
 
         item.parent().setData(parent_data, ItemRoles.SettingFields)
 

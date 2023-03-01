@@ -1,8 +1,7 @@
 {
-"name": "export_geometry",
-"label": "Export Geometry",
-"path" : "maya/plugins",
-"children": [
+  "name": "export_geometry",
+  "label": "Export Geometry",
+  "children": [
     {
       "name": "export_root",
       "label": "Export Root",

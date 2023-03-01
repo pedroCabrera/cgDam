@@ -1,0 +1,44 @@
+{
+  "name": "substance_painter_clarisse",
+  "label": "Substance Painter Clarisse",
+  "children": [
+    {
+      "name": "geometry_type",
+      "label": "Geometry Type",
+      "menu_items": [
+        "Alembic Reference",
+        "Alembic Bundle",
+        "USD Reference",
+        "USD Bundle"
+      ],
+      "default_value": "Alembic Bundle",
+      "value": "Alembic Bundle",
+      "type": "drop_menu",
+      "tooltip": "The type to geometry to create in clarisse is it reference or bundle"
+    },
+    {
+      "name": "use_material",
+      "label": "Use Material",
+      "menu_items": [
+        "Autodesk Standard Surface",
+        "Disney Principles"
+      ],
+      "default_value": "Autodesk Standard Surface",
+      "value": "Autodesk Standard Surface",
+      "type": "drop_menu",
+      "tooltip": "Convert material to renderer in clarisse"
+    },
+    {
+      "name": "colorspace",
+      "label": "Colorspace",
+      "menu_items": [
+        "sRGB",
+        "ACES"
+      ],
+      "default_value": "ACES",
+      "value": "ACES",
+      "type": "drop_menu",
+      "tooltip": "The colorspace of textures in clarisse"
+    }
+  ]
+}
