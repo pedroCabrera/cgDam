@@ -41,45 +41,32 @@ def get_settings_data():
     else:
         data = fm.read_json(root_settings_file)
 
-    return data.get('items', [])
-
-def save_path_in_data(data,path):
-    if isinstance(data,dict):
-        children = data.get('children', [])
-        if not "path" in data:
-            data["path"] = path        
-        for e, child in enumerate(children):
-            if not "path" in child:
-                child["path"] = path
-            #children2 = child.get('children', [])
-            #for e, child2 in enumerate(children2):
-            #    save_path_in_data(child2,child["path"])
+    return get_resolved_settings(data.get('items', []))
 
 def get_resolved_settings(data):
     """
     To resolve all file paths
     :param data:(dictionary) resolved filepath data
     """
-    for i, item in enumerate(data):
-        if isinstance(item,dict):
-            children = item.get('children', [])
-            for e, child in enumerate(children):
-                if isinstance(child, dict):
-                    child = get_resolved_settings([child])[0]
-                if isinstance(child, str) and '$' in child:
-                    file_name = child.split('$')[-1] + '.json'
-                    file_path = user_settings_dir.joinpath(file_name)
-                    if not file_path.is_file():
-                        file_path = root_settings_dir.joinpath(file_name)
-                        if not file_path.is_file():
-                            continue
-                    rdata = fm.read_json(file_path)
-                    rrdata = get_resolved_settings([rdata])
-                    for element in rrdata:
-                        save_path_in_data(element,child)
-                    children.pop(e)
-                    children.insert(e, rdata)
-    return data
+    for e, child in enumerate(data):
+        if isinstance(child, dict):
+            child = get_resolved_settings(child.get('children', []))
+        if isinstance(child, str) and '$' in child:
+            file_name = child.split('$')[-1] + '.json'
+            file_path = user_settings_dir.joinpath(file_name)
+            if not file_path.is_file():
+                file_path = root_settings_dir.joinpath(file_name)
+                if not file_path.is_file():
+                    continue
+            rdata = fm.read_json(file_path)
+            rdata = get_resolved_settings([rdata])
+            for element in rdata:
+                if isinstance(element,dict):
+                    if not "path" in element:
+                        element["path"] = child
+            data.pop(e)
+            data.insert(e, rdata[0])
+    return(data)
 
 def set_settings_data(data_list):
     """
@@ -115,7 +102,7 @@ def get_value(*args):
     :param args: (list) the list of path to specific key
     :return: (dict) dictionary that contain given key
     """
-    items_list = get_resolved_settings(get_settings_data())
+    items_list = get_settings_data()
 
     my_dict = {}
     for arg in args:
@@ -269,6 +256,24 @@ def shading_nodes_conversion(from_host, from_renderer, to_host, to_renderer):
     nodes = {from_nodes[i]: to_nodes[j] for i, j in zip(from_nodes, to_nodes)}
     return nodes
 
+def save_referenced_files(data,parent=None,path=None):
+    for i, item in enumerate(data):
+        children = item.get("children")
+        if children:
+            save_referenced_files(children,item,path)
+        if "path" in item:
+            if parent:
+                if path:
+                    filepath = item.get('path').split("$")[-1]
+                    fm.write_json(path.joinpath(f"{filepath}.json"), item)                    
+                data.pop(i)
+                data.insert(i, item.get('path'))
+
+def save_encoded_cfg_data(data,path=None):
+        save_referenced_files(data,path=path)
+        if path:
+            wdata = {'items': data}
+            fm.write_json(path.joinpath("settings.json"),wdata)
 
 if __name__ == '__main__':
 
@@ -277,7 +282,13 @@ if __name__ == '__main__':
     else:
         app = QApplication.instance()
     #print(get_value('plugins', 'general', 'dcc','maya'))#.get('children', [])
-    print(get_resolved_settings(get_settings_data()))
+    a = get_resolved_settings(get_settings_data())
+    print(json.dumps(a[0],indent=4))
+    save_encoded_cfg_data(a,path=user_settings_dir)
+    print("encoded")
+    print(json.dumps(a,indent=4))
+    #print(json.dumps(get_resolved_settings(get_settings_data()), indent=4))
+    #print(get_resolved_settings(get_settings_data()))
     #print(get_dcc_cfg('dcc','maya', 'plugins','export_geometry'))
     # set_value('512', "maya", "plugins", "maya_substance_painter", "default_texture_resolution")
     #a = get_settings_data()
