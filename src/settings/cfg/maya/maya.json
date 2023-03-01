@@ -1,0 +1,37 @@
+{
+  "name": "maya",
+  "label": "Maya",
+  "path" :"maya/maya",
+  "children": [
+    {
+      "name": "configuration",
+      "label": "Configuration",
+      "children": [
+        {
+          "name": "executable",
+          "label": "Executable",
+          "default_value": "C:/Program Files/Autodesk/Maya2023/bin/maya.exe",
+          "value": "C:/Program Files/Autodesk/Maya2023/bin/maya.exe",
+          "type": "input_text",
+          "tooltip": "Maya executable path",
+          "placeholder": "e.g. 'C:/Program Files/Autodesk/Maya2023/bin/maya.exe'"
+        }
+      ]
+    },
+    {
+        "name": "plugins",
+        "label": "Plugins",
+        "children": [
+          "$maya/plugins/export_geometry"
+        ]
+    }
+    ,
+    {
+      "name": "renderers",
+      "label": "Renderers",
+      "children": [
+        "$maya/renderers/arnold"
+      ]
+    }
+  ]
+}

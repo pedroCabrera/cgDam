@@ -1,0 +1,56 @@
+{
+"name": "export_geometry",
+"label": "Export Geometry",
+"path" : "maya/plugins",
+"children": [
+    {
+      "name": "export_root",
+      "label": "Export Root",
+      "default_value": "../Export/$selection",
+      "value": "../Export/$selection",
+      "type": "input_text",
+      "tooltip": "The directory in which the maya will export geometry\\n relatives to maya file\"",
+      "placeholder": "e.g. '../Export/$selection'"
+    },
+    {
+      "name": "use_pyblish",
+      "label": "Use Pyblish",
+      "default_value": true,
+      "value": true,
+      "type": "toggle_box",
+      "tooltip": "Use pyblish validator on export geometry"
+    },
+    {
+      "name": "obj",
+      "label": "OBJ",
+      "default_value": true,
+      "value": true,
+      "type": "toggle_box",
+      "tooltip": "Export obj format file when publish"
+    },
+    {
+      "name": "fbx",
+      "label": "FBX",
+      "default_value": false,
+      "value": false,
+      "type": "toggle_box",
+      "tooltip": "Export fbx format file when publish"
+    },
+    {
+      "name": "abc",
+      "label": "ABC",
+      "default_value": true,
+      "value": true,
+      "type": "toggle_box",
+      "tooltip": "Export alembic file when publish"
+    },
+    {
+      "name": "usd",
+      "label": "USD",
+      "default_value": false,
+      "value": false,
+      "type": "toggle_box",
+      "tooltip": "Export usd file when publish"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "arnold",
+  "label": "Arnold",
+  "path": "maya/renderers",
+  "children": [
+    {
+      "name": "standard_surface",
+      "label": "Standard Surface",
+      "default_value": "aiStandardSurface",
+      "value": "aiStandardSurface",
+      "type": "input_text",
+      "tooltip": "",
+      "placeholder": ""
+    }
+  ]
+}
