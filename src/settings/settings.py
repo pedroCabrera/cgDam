@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 import ast
 
+os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
 from PySide2.QtWidgets import QApplication
 
 CgDamROOT = os.getenv("CgDamROOT")
@@ -42,6 +43,43 @@ def get_settings_data():
 
     return data.get('items', [])
 
+def save_path_in_data(data,path):
+    if isinstance(data,dict):
+        children = data.get('children', [])
+        if not "path" in data:
+            data["path"] = path        
+        for e, child in enumerate(children):
+            if not "path" in child:
+                child["path"] = path
+            #children2 = child.get('children', [])
+            #for e, child2 in enumerate(children2):
+            #    save_path_in_data(child2,child["path"])
+
+def get_resolved_settings(data):
+    """
+    To resolve all file paths
+    :param data:(dictionary) resolved filepath data
+    """
+    for i, item in enumerate(data):
+        if isinstance(item,dict):
+            children = item.get('children', [])
+            for e, child in enumerate(children):
+                if isinstance(child, dict):
+                    child = get_resolved_settings([child])[0]
+                if isinstance(child, str) and '$' in child:
+                    file_name = child.split('$')[-1] + '.json'
+                    file_path = user_settings_dir.joinpath(file_name)
+                    if not file_path.is_file():
+                        file_path = root_settings_dir.joinpath(file_name)
+                        if not file_path.is_file():
+                            continue
+                    rdata = fm.read_json(file_path)
+                    rrdata = get_resolved_settings([rdata])
+                    for element in rrdata:
+                        save_path_in_data(element,child)
+                    children.pop(e)
+                    children.insert(e, rdata)
+    return data
 
 def set_settings_data(data_list):
     """
@@ -52,12 +90,10 @@ def set_settings_data(data_list):
     data = {'items': data_list}
     fm.write_json(user_settings_file, data)
 
-
 def error_on_reading(key, dict_name):
     # popup message with error
     # message(None, 'Error', f'Corrupted settings file.\nCan not get "{key}" from "{dict_name}" dict settings')
     raise Exception(f'Can not get settings of "{key}" from "{dict_name}"')
-
 
 def get_dict(base_list, key):
     """
@@ -72,44 +108,25 @@ def get_dict(base_list, key):
     else:
         return dict_list[0]
 
-
-def get_value(key, *args):
+def get_value(*args):
     """
     To get the value of specific key with specific args path
     :param key:(str) the key name
     :param args: (list) the list of path to specific key
     :return: (dict) dictionary that contain given key
     """
-    items_list = get_settings_data()
+    items_list = get_resolved_settings(get_settings_data())
 
     my_dict = {}
     for arg in args:
         my_dict = get_dict(items_list, arg)
-
         if not my_dict:
-            error_on_reading(key, arg)
+            error_on_reading(arg, arg)
             return {}
-
-        items_list = my_dict.get('children', [])
-        for i, item in enumerate(items_list):
-            if isinstance(item, str) and '$' in item:
-                file_name = item.split('$')[-1] + '.json'
-                file_path = user_settings_dir.joinpath(file_name)
-                if not file_path.is_file():
-
-                    file_path = root_settings_dir.joinpath(file_name)
-
-                    if not file_path.is_file():
-                        continue
-
-                data = fm.read_json(file_path)
-                items_list.pop(i)
-                items_list.insert(i, data)
 
         items_list = my_dict.get('children', [])
 
     return my_dict
-
 
 def set_value(value, *args):
     """
@@ -132,7 +149,6 @@ def set_value(value, *args):
     my_dict['value'] = value
     set_settings_data(items_list)
 
-
 def reset_value(key, *args):
     """
     To reset the value of specific key with specific args path
@@ -143,7 +159,6 @@ def reset_value(key, *args):
     my_dict = get_value(key, *args)
     set_value(my_dict.get('default_value'), *args)
 
-
 def get_colorspace_settings(key='aces_color_hdr'):
     """
     To get the colorspace settings of textures
@@ -153,7 +168,6 @@ def get_colorspace_settings(key='aces_color_hdr'):
     value_dict = get_value(key, 'general', 'textures', 'colorspace', key)
     return value_dict.get('value', '')
 
-
 def get_textures_settings(key='extensions'):
     """
     To get the textures settings
@@ -162,7 +176,6 @@ def get_textures_settings(key='extensions'):
     """
     value_dict = get_value(key, 'general', 'textures', 'patterns', key)
     return ast.literal_eval(value_dict.get('value', '[]'))
-
 
 def get_textures_patterns():
     """
@@ -175,7 +188,6 @@ def get_textures_patterns():
     patterns.pop('hdr_extension')
     return patterns
 
-
 def get_dcc_cfg(*args):
     """
     To get the dcc full configuration of given path of args
@@ -183,7 +195,7 @@ def get_dcc_cfg(*args):
     :return: {dict} if table or multi seetings
             {value} of single field
     """
-    value_dict = get_value(args[-1], *args)
+    value_dict = get_value(*args)
     if 'data' in value_dict:
         values = {x['name']: x.get('value') for x in value_dict.get('data', [])}
         return values
@@ -231,7 +243,6 @@ def get_material_attrs(host, renderer, node='standard_surface'):
     plugs = {k: plugs_original[k] for k in plugs_original}
     return plugs
 
-
 def get_shading_nodes(host, renderer):
     """
     To get the defined nodes in settings
@@ -242,7 +253,6 @@ def get_shading_nodes(host, renderer):
     render_dict = get_value(renderer, host, 'renderers', renderer)
     shading_nodes = {x['name']: x['value'] for x in render_dict.get('children', []) if 'value' in x}
     return shading_nodes
-
 
 def shading_nodes_conversion(from_host, from_renderer, to_host, to_renderer):
     """
@@ -266,12 +276,12 @@ if __name__ == '__main__':
         app = QApplication(sys.argv)
     else:
         app = QApplication.instance()
-
-    # print(get_value('plugins', 'maya', 'plugins'))
-    # print(get_value('arnold', 'maya', 'renderers', 'arnold'))
-    # print(get_dcc_cfg("substance_painter", "texture_export"))
+    #print(get_value('plugins', 'general', 'dcc','maya'))#.get('children', [])
+    print(get_resolved_settings(get_settings_data()))
+    #print(get_dcc_cfg('dcc','maya', 'plugins','export_geometry'))
     # set_value('512', "maya", "plugins", "maya_substance_painter", "default_texture_resolution")
-    print(get_textures_patterns())
-    sys.exit(app.exec_())
-
-    print(__name__)
+    #a = get_settings_data()
+    #print(a)
+    #b = get_resolved_settings(a)
+    #print(b)
+    #sys.exit(app.exec_())
