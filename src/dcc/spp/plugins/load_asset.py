@@ -45,7 +45,7 @@ class LoadAsset(pyblish.api.InstancePlugin):
         mesh_path = data.get('mesh_path', '')
         cfg = data.get('cfg', {})
 
-        spp_exe = get_dcc_cfg("substance_painter", "configuration", "executable")
+        spp_exe = get_dcc_cfg('dcc', "substance_painter", "configuration", "executable")
 
         if not spp_exe:
             message(None, 'Error', 'Please configure the substance painter executable first.')
@@ -63,7 +63,7 @@ class LoadAsset(pyblish.api.InstancePlugin):
             self.process(instance)
 
     def open_spp_file(self, mesh_path, project_path=None, cfg=None, *args):
-        spp_exe = Path(get_dcc_cfg("substance_painter", "configuration", "executable"))
+        spp_exe = Path(get_dcc_cfg('dcc', "substance_painter", "configuration", "executable"))
         if is_process_running(spp_exe.name):
             sp = connect_spp()
             if sp:

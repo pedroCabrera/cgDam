@@ -83,7 +83,7 @@ class ToolSettingsBase(QMainWindow, Ui_ToolSettings):
         self.setWindowIcon(QIcon(f':/icons/{icon}'))
 
     def get_cfg(self):
-        maya_plugins_cfg = get_value('plugins', 'maya', 'plugins').get('children', [])
+        maya_plugins_cfg = get_value('dcc', 'maya', 'plugins').get('children', [])
         current_preset_list = [x.get('children') for x in maya_plugins_cfg if x.get('name') == self.presets_name][0]
         preset = {x.get('name'): x.get('value') for x in current_preset_list}
         return preset

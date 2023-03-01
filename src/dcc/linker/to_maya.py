@@ -16,7 +16,7 @@ fm = FileManager()
 
 def is_maya_connected(port_num=None):
     if not port_num:
-        port_num = get_dcc_cfg("maya", 'configuration', "command_port")
+        port_num = get_dcc_cfg('dcc', "maya", 'configuration', "command_port")
     socket = OpenSocket(host='localhost', port=port_num)
     return socket
 
@@ -24,7 +24,7 @@ def is_maya_connected(port_num=None):
 def send_to_maya(data, port_num=None):
     try:
         if not port_num:
-            port_num = get_dcc_cfg("maya", 'configuration', "command_port")
+            port_num = get_dcc_cfg('dcc', "maya", 'configuration', "command_port")
         socket = OpenSocket(host='127.0.0.1', port=int(port_num))
 
         cmd_text = "## cgDam Tools ##\n\n"

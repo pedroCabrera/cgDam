@@ -110,7 +110,7 @@ class Maya:
         return export_dir.replace("\\", "/")
 
     def get_export_path(self):
-        export_root = get_dcc_cfg('maya', 'plugins', 'export_geometry', 'export_root')
+        export_root = get_dcc_cfg('dcc','maya', 'plugins', 'export_geometry', 'export_root')
         return self.convert_path(export_root)
 
     def get_project_name(self):

@@ -30,7 +30,7 @@ fm = FileManager()
 # Start Here
 def set_port_num(port_num=None):
     if port_num is None:
-        port_num = get_dcc_cfg("clarisse", 'configuration', "command_port")
+        port_num = get_dcc_cfg('dcc', "clarisse", 'configuration', "command_port")
     return port_num
 
 
