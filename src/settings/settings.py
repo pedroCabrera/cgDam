@@ -8,7 +8,6 @@ import sys
 from pathlib import Path
 import ast
 
-os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
 from PySide2.QtWidgets import QApplication
 
 CgDamROOT = os.getenv("CgDamROOT")
