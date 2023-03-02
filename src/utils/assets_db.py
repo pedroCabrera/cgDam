@@ -239,7 +239,10 @@ class AssetsDB(Connect):
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
                     parent_id INTEGER,
+                    asset_type_id INTEGER,
+                    UNIQUE(name),
                     FOREIGN KEY (parent_id) REFERENCES categories (id) ON DELETE CASCADE
+                    FOREIGN KEY (asset_type_id) REFERENCES asset_types (id) ON DELETE CASCADE
                     );
         '''
         cur.execute(query)
@@ -410,6 +413,29 @@ class AssetsDB(Connect):
         '''
         cur.execute(query)
 
+    @Connect.db
+    def add_typed_category(self, conn, category_name, asset_type_name, parent_category = None):
+        cur = conn.cursor()
+        asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type_name}";').fetchone()
+        if not asset_type_id:
+            raise Exception("You must specify a valid asset type to register an asset")
+            return 
+         
+        parent_id = None
+        if parent_category:
+            parent_id = cur.execute(f'SELECT id FROM categories WHERE name="{parent_category}";').fetchone()
+            if not parent_id:
+                raise Exception("Specify a valid parent Category")
+                return
+            parent_id = parent_id[0]       
+        query = f'''
+                INSERT INTO categories 
+                (name, parent_id, asset_type_id)
+                VALUES
+                ("{category_name}", "{parent_id}", "{asset_type_id[0]}");
+        '''
+        cur.execute(query)
+    
     @Connect.db
     def add_asset(self, conn, asset_name, asset_type):
         cur = conn.cursor()
@@ -767,13 +793,24 @@ class AssetsDB(Connect):
 # Main Function
 def main():
     db = AssetsDB()
-
-    #db.add_asset_type(asset_type_name="3D Asset")
+    try:
+        db.add_asset_type(asset_type_name="3D Asset")
+    except:
+        pass
+    try:
+        db.add_typed_category(category_name="Vehicles", parent_category=None, asset_type_name="3D Asset")
+    except:
+        pass        
+    try:
+        db.add_typed_category(category_name="Cars", parent_category="Vehicles", asset_type_name="3D Asset")
+    except:
+        pass        
     #db.add_asset_type(asset_type_name="Textures")
     #db.add_asset_type(asset_type_name="Shaders")
     #db.add_asset_type(asset_type_name="HDRI")
 
     db.add_asset(asset_name="test_2",asset_type="3D Asset")
+    db.add_asset(asset_name="test_3",asset_type="3D Asset")
     #data = json.dumps({'foo': 'bar'})
     #db.add_geometry(asset_name="tv_table", mesh_data=f'{data}')
     # x = db.add_tag(asset_name="ABAGORA", tag_name="tag1")
