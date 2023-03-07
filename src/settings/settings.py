@@ -289,7 +289,6 @@ def shading_nodes_conversion(from_host, from_renderer, to_host, to_renderer):
 
 
 if __name__ == '__main__':
-    os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
     if not QApplication.instance():
         app = QApplication(sys.argv)
     else:

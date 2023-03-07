@@ -25,10 +25,10 @@ def message(parent=None):
     about.setWindowIcon(QIcon(":/icons/about.png"))
     about.setInformativeText(f'''
     <blockquote skip="true">
-        <h2><strong>cgDam Tools</strong></h2>
+        <h2><strong>cgDam</strong></h2>
     </blockquote>
-    <p>Open-source assets pipeline that can manage the assets workflow.</p>
-    <p><a href="https://github.com/Michaelredaa/cgDam">https://github.com/Michaelredaa/cgDam</a></p>
+    <p>Open-source assets manager with workflow tools.</p>
+    <p><a href="https://github.com/pedroCabrera/cgDam">https://github.com/pedroCabrera/cgDam</a></p>
     <pstyle="margin-left: 40px;">Version: {version}</p>
     <pre>2022 cgDam, All rights reserved</pre>
     <p><br></p>
@@ -41,6 +41,6 @@ def message(parent=None):
     about.exec_()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': 
     message()
     print(__name__)
