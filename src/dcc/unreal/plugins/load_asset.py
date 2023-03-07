@@ -72,9 +72,9 @@ class LoadAsset(pyblish.api.InstancePlugin):
             return
 
         # create root
-        asset_root = get_dcc_cfg('dcc', 'unreal', 'configuration', 'asset_root')
-        mtl_root = get_dcc_cfg('dcc', 'unreal', 'configuration', 'material_root')
-        tex_root = get_dcc_cfg('dcc', 'unreal', 'configuration', 'texture_root')
+        asset_root = get_dcc_cfg('unreal', 'configuration', 'asset_root')
+        mtl_root = get_dcc_cfg('unreal', 'configuration', 'material_root')
+        tex_root = get_dcc_cfg('unreal', 'configuration', 'texture_root')
 
         # resolve paths
         asset_root = asset_root.replace("$assetName", asset_name)
@@ -123,7 +123,7 @@ class LoadAsset(pyblish.api.InstancePlugin):
             plugs_conversion = get_material_attrs(self.hosts[0], to_renderer)
 
             # get master material path
-            master_mat_path = get_dcc_cfg('dcc', 'unreal', 'renderers', to_renderer, 'standard_surface')
+            master_mat_path = get_dcc_cfg('unreal', 'renderers', to_renderer, 'standard_surface')
 
             mtl_path = mtl_root + '/' + sg_name
             if ur.assetExists(mtl_path):

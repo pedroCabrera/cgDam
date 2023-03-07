@@ -98,7 +98,7 @@ class SubstanceIntegration():
         self.use_latest_textures_action = settings_menu.addAction("&Use Latest Textures on DCC")
         self.use_latest_textures_action.setCheckable(True)
         try:
-            latest_texture_status = get_dcc_cfg('dcc', "substance_painter", "configuration", 'use_latest_textures')
+            latest_texture_status = get_dcc_cfg("substance_painter", "configuration", 'use_latest_textures')
         except:
             latest_texture_status = True
         self.use_latest_textures_action.setChecked(latest_texture_status)
@@ -167,7 +167,7 @@ class SubstanceIntegration():
     def on_textures_export(self):
 
         # get presets
-        presets = get_dcc_cfg('dcc', "substance_painter", "texture_export")
+        presets = get_dcc_cfg("substance_painter", "texture_export")
         self.js.set_export_preset_name(presets["preset"])
 
         # export textures
@@ -188,7 +188,7 @@ class SubstanceIntegration():
         # add texture to db
 
     def on_export_settings(self):
-        options = get_dcc_cfg('dcc', "substance_painter", "texture_export")
+        options = get_dcc_cfg("substance_painter", "texture_export")
         options["path"] = self.get_export_texture_path()
 
         if (not options["preset"].endswith(".spexp")) and options["preset"].startswith('resource://'):
@@ -219,7 +219,7 @@ class SubstanceIntegration():
             if not self.use_latest_textures_action.isChecked():
                 self.on_textures_export()
 
-            settings = get_dcc_cfg('dcc', "substance_painter", "plugins", 'substance_painter_maya')
+            settings = get_dcc_cfg("substance_painter", "plugins", 'substance_painter_maya')
 
             asset_data = db.get_geometry(
                 asset_name=self.asset_name,
@@ -254,7 +254,7 @@ class SubstanceIntegration():
             if not self.use_latest_textures_action.isChecked():
                 self.on_textures_export()
 
-            settings = get_dcc_cfg('dcc', "substance_painter", "plugins", 'substance_painter_clarisse')
+            settings = get_dcc_cfg("substance_painter", "plugins", 'substance_painter_clarisse')
             to_render = settings.get('use_material')
             to_render = '_'.join(to_render.lower().split(' '))
 
@@ -328,7 +328,7 @@ class SubstanceIntegration():
                     f"'{source_file_path}' is not an path\nIt seems you not save the source maya file.")
             return
 
-        save_root = get_dcc_cfg('dcc', "substance_painter", "configuration", "spp_save_directory")
+        save_root = get_dcc_cfg("substance_painter", "configuration", "spp_save_directory")
         print({"$asset_name": self.asset_name, "$project": self.project_dir})
         resolved_dir = self.fm.resolve_path(
             save_root,
@@ -338,7 +338,7 @@ class SubstanceIntegration():
         return resolved_path
 
     def get_export_texture_path(self):
-        export_root = get_dcc_cfg('dcc', "substance_painter", "texture_export").get("path")
+        export_root = get_dcc_cfg("substance_painter", "texture_export").get("path")
 
         resolved_path = self.fm.resolve_path(
             export_root,

@@ -18,7 +18,7 @@ from settings.settings import get_dcc_cfg
 
 
 def create_spp_shortcut():
-    spp_exe = get_dcc_cfg('dcc', "substance_painter", "configuration", "executable")
+    spp_exe = get_dcc_cfg("substance_painter", "configuration", "executable")
     create_shortcut(
         f'{os.getenv("PROGRAMDATA")}/Microsoft/Windows/Start Menu/Programs/cgDam Adobe Substance 3D Painter.lnk',
         spp_exe,

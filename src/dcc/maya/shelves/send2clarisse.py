@@ -166,7 +166,7 @@ class Maya2ClsSettings(ToolSettingsBase):
         self.onConnect()
 
     def onClarisseOpen(self):
-        cls_exe = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'executable')
+        cls_exe = get_dcc_cfg('clarisse', 'configuration', 'executable')
 
         subprocess.Popen(f'"{cls_exe}" -flavor ifx')
 

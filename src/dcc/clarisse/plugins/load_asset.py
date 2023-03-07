@@ -106,14 +106,14 @@ class LoadAsset(pyblish.api.InstancePlugin):
             if not root_ctx:
                 return
         else:
-            root_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'asset_root')
+            root_ctx = get_dcc_cfg( 'clarisse', 'configuration', 'asset_root')
             root_ctx = root_ctx.replace("$assetName", asset_name)
 
         # get context cfg
-        geo_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'geometry_root')
-        mtl_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'material_root')
-        tex_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'texture_root')
-        utils_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'utils_root')
+        geo_ctx = get_dcc_cfg( 'clarisse', 'configuration', 'geometry_root')
+        mtl_ctx = get_dcc_cfg( 'clarisse', 'configuration', 'material_root')
+        tex_ctx = get_dcc_cfg( 'clarisse', 'configuration', 'texture_root')
+        utils_ctx = get_dcc_cfg( 'clarisse', 'configuration', 'utils_root')
 
         # resolve and create contexts
         if selected_ctx != 'selected':

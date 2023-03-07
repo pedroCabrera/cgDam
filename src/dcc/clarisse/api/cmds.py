@@ -288,12 +288,12 @@ class Clarisse:
         material_attrs = get_shading_nodes('clarisse', self.material_type)
 
         # create contexts
-        mtl_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'material_root')
-        tex_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'texture_root')
-        utils_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'utils_root')
+        mtl_ctx = get_dcc_cfg('clarisse', 'configuration', 'material_root')
+        tex_ctx = get_dcc_cfg('clarisse', 'configuration', 'texture_root')
+        utils_ctx = get_dcc_cfg('clarisse', 'configuration', 'utils_root')
 
         # root
-        root_ctx = get_dcc_cfg('dcc', 'clarisse', 'configuration', 'asset_root')
+        root_ctx = get_dcc_cfg('clarisse', 'configuration', 'asset_root')
         root_ctx = root_ctx.replace("$assetName", asset_name)
 
         if ix.item_exists(root_ctx):

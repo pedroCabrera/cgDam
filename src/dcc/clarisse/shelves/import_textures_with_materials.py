@@ -38,7 +38,7 @@ def process():
     if not tex_dir:
         return
 
-    settings = get_dcc_cfg('dcc', 'clarisse', 'plugins', 'material_from_textures')
+    settings = get_dcc_cfg('clarisse', 'plugins', 'material_from_textures')
 
     colorspace = settings.get('colorspace').lower()
     to_renderer = settings.get('material_type')

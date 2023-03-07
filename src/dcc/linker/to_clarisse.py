@@ -32,7 +32,7 @@ fm = FileManager()
 
 def is_clarisse_connected(port_num=None):
     if not port_num:
-        port_num = get_dcc_cfg('dcc', "clarisse", 'configuration', "command_port")
+        port_num = get_dcc_cfg("clarisse", 'configuration', "command_port")
     socket = connect(ip='localhost', port_num=int(port_num))
     return socket
 
@@ -40,7 +40,7 @@ def is_clarisse_connected(port_num=None):
 def send_to_clarisse(data, port_num=None):
     try:
         if not port_num:
-            port_num = get_dcc_cfg('dcc', "clarisse", 'configuration', "command_port")
+            port_num = get_dcc_cfg("clarisse", 'configuration', "command_port")
         socket = connect(ip='localhost', port_num=int(port_num))
 
         cmd_text = "## cgDam Tools ##\n\n"

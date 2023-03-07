@@ -23,7 +23,7 @@ from utils.open_ports import OpenSocket
 def send_to_unreal(data, port_num=None):
     try:
         if not port_num:
-            port_num = get_dcc_cfg('dcc', "unreal", 'configuration', "command_port")
+            port_num = get_dcc_cfg("unreal", 'configuration', "command_port")
 
         unreal_socket = OpenSocket(host='127.0.0.1', port=port_num)
 
