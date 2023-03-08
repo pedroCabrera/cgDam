@@ -112,6 +112,7 @@ class Ui_AssetBrowserWindow(object):
 
         
         self.treeView = QTreeView()
+        self.treeView.setHeaderHidden(True)
         self.verticla_layout_categories.addWidget(self.treeView)
                 
         self.lw_assets = ListView(self.splitter_main)

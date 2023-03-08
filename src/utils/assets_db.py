@@ -411,14 +411,17 @@ class AssetsDB(Connect):
                 VALUES
                 ("{asset_type_name}");
         '''
-        cur.execute(query)
+        try:
+            cur.execute(query)
+        except:
+            print(f"Error creating asset type{asset_type_name}")
 
     @Connect.db
     def add_typed_category(self, conn, category_name, asset_type_name, parent_category = None):
         cur = conn.cursor()
         asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type_name}";').fetchone()
         if not asset_type_id:
-            raise Exception("You must specify a valid asset type to register an asset")
+            raise Exception("You must specify a valid asset type to register a category")
             return 
          
         parent_id = None
@@ -700,14 +703,14 @@ class AssetsDB(Connect):
 
         cur = conn.cursor()
         query = f'''
-                SELECT name FROM asset_types
+                SELECT name,id FROM asset_types
                 ORDER BY 
                 name
         '''
         cur.execute(query)
         tags = cur.fetchall()
 
-        return [x[0] for x in tags if x[0]]
+        return tags#[x[0] for x in tags if x[0]]
     
     @Connect.db
     def all_tags(self, conn):
@@ -722,6 +725,28 @@ class AssetsDB(Connect):
         tags = cur.fetchall()
 
         return [x[0] for x in tags if x[0]]
+    
+    @Connect.db
+    def all_categories(self, conn, asset_type=None):
+        cur = conn.cursor()
+        if asset_type== None:
+            query = f'''
+                    SELECT id, name, parent_id, asset_type_id FROM categories
+                    ORDER BY 
+                    id
+            '''
+        else:
+            query = f'''
+                    SELECT id, name, parent_id, asset_type_id FROM categories
+                    WHERE 
+                    asset_type_id=(SELECT id from asset_types WHERE name="{asset_type}")
+                    ORDER BY 
+                    id            
+            '''
+        cur.execute(query)
+        tags = cur.fetchall()
+
+        return tags#[x[0] for x in tags if x[0]]        
 
     @Connect.db
     def all_projects(self, conn):
@@ -793,24 +818,17 @@ class AssetsDB(Connect):
 # Main Function
 def main():
     db = AssetsDB()
-    try:
-        db.add_asset_type(asset_type_name="3D Asset")
-    except:
-        pass
-    try:
-        db.add_typed_category(category_name="Vehicles", parent_category=None, asset_type_name="3D Asset")
-    except:
-        pass        
-    try:
-        db.add_typed_category(category_name="Cars", parent_category="Vehicles", asset_type_name="3D Asset")
-    except:
-        pass        
-    #db.add_asset_type(asset_type_name="Textures")
-    #db.add_asset_type(asset_type_name="Shaders")
-    #db.add_asset_type(asset_type_name="HDRI")
+    """
+    db.add_asset_type(asset_type_name="3D Asset")
+    db.add_asset_type(asset_type_name="Textures")
+    db.add_asset_type(asset_type_name="Shaders")
+    db.add_asset_type(asset_type_name="HDRI")
 
-    db.add_asset(asset_name="test_2",asset_type="3D Asset")
-    db.add_asset(asset_name="test_3",asset_type="3D Asset")
+    db.add_asset(asset_name="test_1",asset_type="3D Asset")
+    db.add_asset(asset_name="test_2",asset_type="Textures")
+    """
+    #print(db.all_asset_types())
+
     #data = json.dumps({'foo': 'bar'})
     #db.add_geometry(asset_name="tv_table", mesh_data=f'{data}')
     # x = db.add_tag(asset_name="ABAGORA", tag_name="tag1")

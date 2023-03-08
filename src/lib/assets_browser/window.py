@@ -161,6 +161,8 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         self.connect_events()
 
         self.populate_items()
+        self.populate_categories()
+        self.populate_asset_types()
 
     def init_win(self):
         title = "Asset Browser"
@@ -207,12 +209,19 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         # table
         self.table_data.setHeaderLabels(["Select to preview"])
 
+        # category tree
+        self.treemodel = QStandardItemModel()
+        self.treeView.setModel(self.treemodel)
+
         # actions
 
     def connect_events(self):
         # search lineedit
         self.le_search.textChanged.connect(self.lw_assets.filter_model.setFilterRegExp)
         self.le_search.keyPressEvent = self.search_bar_key_event
+
+        # Asset Type
+        self.asset_type_selector.currentTextChanged.connect(self.change_asset_type)
 
         # list view
         self.lw_assets.doubleClicked.connect(self.on_item_double_clicked)
@@ -245,6 +254,25 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         database_data = db.get_assets_data()
 
         self.img_iter = iter(database_data)
+        
+    def populate_asset_types(self,asset_type=None):
+        asset_types = [x[0] for x in db.all_asset_types() if x[0]]
+        self.asset_type_selector.addItems(asset_types)
+
+    def change_asset_type(self, asset_type):
+        self.treemodel.removeRows( 0, self.treemodel.rowCount() )
+        items = {}        
+        for id, name, parent, type in db.all_categories(asset_type=asset_type):
+            item = QStandardItem(name)
+            items[id] = item
+            if parent and parent != "None":
+                items[parent].appendRow(item)
+            else:
+                self.treemodel.appendRow(item)   
+
+    def populate_categories(self):
+        for asset_type in db.all_asset_types():
+            self.change_asset_type(asset_type[0])
 
     def add_item(self):
         try:
