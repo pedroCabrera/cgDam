@@ -20,7 +20,7 @@
           "label": "Command Port",
           "default_value": 55100,
           "value": 55100,
-          "type": "input_text",
+          "type": "input_number",
           "tooltip": "unreal command port number to communicate with another programs",
           "placeholder": "e.g. '55100'"
         },

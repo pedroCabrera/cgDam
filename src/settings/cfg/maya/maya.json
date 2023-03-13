@@ -20,7 +20,7 @@
           "label": "Command Port",
           "default_value": 4436,
           "value": 4436,
-          "type": "input_text",
+          "type": "input_number",
           "tooltip": "Maya command port number to communicate with another programs",
           "placeholder": "e.g. '4436'"
         },
