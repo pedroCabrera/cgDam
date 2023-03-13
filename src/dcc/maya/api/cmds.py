@@ -23,7 +23,7 @@ from maya.app.general import fileTexturePathResolver
 from PySide2.QtWidgets import QMessageBox, QWidget
 
 from shiboken2 import wrapInstance
-from utils.generic import merge_dicts
+
 
 CgDamROOT = os.getenv("CgDamROOT")
 scripts_path = os.path.join(CgDamROOT, "src")

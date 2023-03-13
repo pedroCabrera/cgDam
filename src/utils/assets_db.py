@@ -65,6 +65,7 @@ class Connect(object):
                 cur = conn.cursor()
                 ret_data = query_func(*args, conn, **kwargs)
             except Exception as e:
+                print(traceback.format_exc())
                 raise e
             else:
                 conn.commit()
