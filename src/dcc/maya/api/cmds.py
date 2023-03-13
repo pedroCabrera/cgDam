@@ -454,12 +454,8 @@ class Maya:
 
             print("[Geometry Exported]: ", export_path + "." + ext)
 
-        old_data = db.get_geometry(asset_name=asset_name, mesh_data="")["mesh_data"]
-        old_data = json.loads(old_data)
         mesh_data = self.get_mesh_data(asset_name)
-        new_data = dict(merge_dicts(old_data, mesh_data))
-
-        db.add_geometry(asset_name=asset_name, mesh_data=json.dumps(new_data))
+        db.add_geometry(asset_name=asset_name, mesh_data=mesh_data)
 
         if _message:
             info(None, "'{}' exported successfully with formats '{}'".format(asset_name, export_type))
