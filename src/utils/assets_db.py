@@ -121,7 +121,7 @@ class AssetsDB(Connect):
                 creation_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 modification_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 uuid TEXT DEFAULT (lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)))),
-                UNIQUE(name, asset_type_id),
+                UNIQUE(name, asset_type_id, asset_category_id),
                 FOREIGN KEY (asset_type_id) REFERENCES asset_types (id) ON DELETE SET DEFAULT
                 );
         '''
@@ -248,7 +248,7 @@ class AssetsDB(Connect):
                     name TEXT,
                     parent_id INTEGER,
                     asset_type_id INTEGER,
-                    UNIQUE(name, parent_id),
+                    UNIQUE(name, parent_id, asset_type_id),
                     FOREIGN KEY (parent_id) REFERENCES categories (id) ON DELETE CASCADE
                     FOREIGN KEY (asset_type_id) REFERENCES asset_types (id) ON DELETE CASCADE
                     );
@@ -409,26 +409,33 @@ class AssetsDB(Connect):
                 INSERT INTO asset_types 
                 (name)
                 VALUES
-                ("{asset_type_name}");
+                ("{asset_type_name}")
+                ON CONFLICT(name) 
+                DO NOTHING
+                ;
         '''
-        try:
-            cur.execute(query)
-        except:
-            print(f"Error creating asset type{asset_type_name}")
+        cur.execute(query)
     
-    def get_category_from_tree(self, cur, asset_category):
+    def get_category_from_tree(self, cur, asset_category, asset_type_name):
         category_tree = asset_category.split("/")
-        asset_category_id = cur.execute(f'SELECT id FROM categories WHERE name="{category_tree[0]}";').fetchone()[0]
+        asset_category_id = cur.execute(f'''SELECT id FROM categories 
+                                            WHERE name="{category_tree[0]}" 
+                                            AND asset_type_id = (SELECT id FROM asset_types WHERE name="{asset_type_name}");''').fetchone()[0]
         if len(category_tree)>1:
             for parent_category in category_tree[1:]:
-                asset_category_id = cur.execute(f'SELECT id FROM categories WHERE name="{parent_category}" AND parent_id ="{asset_category_id}";').fetchone()[0]
+                asset_category_id = cur.execute(f'''SELECT id FROM categories 
+                                                WHERE name="{parent_category}" 
+                                                AND 
+                                                parent_id ="{asset_category_id}" 
+                                                AND 
+                                                asset_type_id = (SELECT id FROM asset_types WHERE name="{asset_type_name}");''').fetchone()[0]
         return asset_category_id
     
     @Connect.db
-    def get_tree_from_category(self, conn, asset_category):
+    def get_tree_from_category(self, conn, asset_category, asset_type_name):
         cur = conn.cursor()
         if isinstance(asset_category, str):
-            asset_category_id = self.get_category_from_tree(cur,asset_category=asset_category)
+            asset_category_id = self.get_category_from_tree(cur,asset_category=asset_category,asset_type_name=asset_type_name)
         elif isinstance(asset_category,int):
             asset_category_id = asset_category
         else:
@@ -439,6 +446,8 @@ class AssetsDB(Connect):
                     SELECT id, name, parent_id
                     FROM categories
                     WHERE id = {asset_category_id}
+                    AND
+                    asset_type_id = (SELECT id FROM asset_types WHERE name="{asset_type_name}")
                     
                     UNION ALL
                     
@@ -454,9 +463,9 @@ class AssetsDB(Connect):
         return "/".join(categories)
 
     @Connect.db
-    def get_all_children_categories(self, conn, asset_category):
+    def get_all_children_categories(self, conn, asset_category,asset_type_name):
         cur = conn.cursor()
-        asset_category_id = self.get_category_from_tree(cur,asset_category)
+        asset_category_id = self.get_category_from_tree(cur,asset_category,asset_type_name)
         query = f'''
                 WITH RECURSIVE recursive_cte(id, name, parent_id, asset_type_id) AS (
                     SELECT id, name, parent_id, asset_type_id
@@ -491,7 +500,10 @@ class AssetsDB(Connect):
                 INSERT INTO categories 
                 (name, parent_id, asset_type_id)
                 VALUES
-                ("{category_name}", "{parent_id}", "{asset_type_id[0]}");
+                ("{category_name}", "{parent_id}", "{asset_type_id[0]}")
+                ON CONFLICT(name, parent_id, asset_type_id) 
+                DO NOTHING
+                ;
         '''
         cur.execute(query)
     
@@ -717,17 +729,17 @@ class AssetsDB(Connect):
             asset_type_text = f'WHERE asset_type_id = (SELECT id from asset_types WHERE name="{asset_type_name}")'
         if asset_category:
             if not recursive_category:
-                asset_category_id = self.get_category_from_tree(cur,asset_category)
+                asset_category_id = self.get_category_from_tree(cur,asset_category,asset_type_name)
                 asset_type_text += f' AND asset_category_id = "{asset_category_id}"'
             else:
-                asset_category_id_list = self.get_all_children_categories(asset_category=asset_category)
+                asset_category_id_list = self.get_all_children_categories(asset_category=asset_category,asset_type_name=asset_type_name)
                 asset_category_id_list = ",".join([str(x) for x in asset_category_id_list])
                 asset_type_text += f' AND asset_category_id IN ({asset_category_id_list});'
         query = f'''
                 SELECT a.id, a.name, at.name AS asset_type, a.asset_category_id, a.creation_date, a.modification_date, a.uuid, g.*
                 FROM assets a
                 INNER JOIN asset_types at ON a.asset_type_id = at.id
-                LEFT JOIN geometry g ON a.id = g.asset_id             
+                LEFT JOIN geometry g ON a.id = g.asset_id
                 {asset_type_text}
         '''
         cur.execute(query)
@@ -839,7 +851,7 @@ class AssetsDB(Connect):
         cur.execute(query)
         tags = cur.fetchall()
 
-        return tags#[x[0] for x in tags if x[0]]        
+        return tags#[x[0] for x in tags if x[0]] 
 
     @Connect.db
     def all_projects(self, conn):
