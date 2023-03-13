@@ -276,7 +276,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         items = {}        
         for id, name, parent, type in db.all_categories(asset_type=asset_type):
             item = QStandardItem(name)
-            item.setData(db.get_tree_from_category(asset_category=id), ItemRoles.AssetCategory)
+            item.setData(db.get_tree_from_category(asset_category=id,asset_type_name=asset_type), ItemRoles.AssetCategory)
             items[id] = item
             if parent and parent != "None":
                 items[parent].appendRow(item)
@@ -295,7 +295,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
                 "asset_id": row[0],
                 "asset_name": row[1],
                 "asset_type": row[2],
-                "asset_category": db.get_tree_from_category(asset_category=row[3]),
+                "asset_category": db.get_tree_from_category(asset_category=row[3],asset_type_name=row[2]),
                 "creation_date": row[4],
                 "modification_date": row[5],
                 "uuid": row[6],
