@@ -11,9 +11,11 @@ import re
 
 import unittest
 
-DJED_ROOT = os.getenv('DJED_ROOT')
-utils_path = os.path.join(DJED_ROOT, 'src')
-sysPaths = [DJED_ROOT, utils_path]
+os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
+
+CgDamROOT = os.getenv('CgDamROOT')
+utils_path = os.path.join(CgDamROOT, 'src')
+sysPaths = [CgDamROOT, utils_path]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:
@@ -23,7 +25,7 @@ from utils.assets_db import AssetsDB, Connect
 
 # ---------------------------------
 # Variables
-db_file = DJED_ROOT + '/src/tests/data/djed.db'
+db_file = CgDamROOT + '/src/tests/data/cgDam.db'
 
 db = AssetsDB(db_file)
 
@@ -35,6 +37,8 @@ class TestDataBase(unittest.TestCase):
     def test_create_default_tables(self, conn):
         table_names = [
             "assets",
+            "categories",
+            "asset_types",
             "asset_projects",
             "asset_tags",
             "geometry",
@@ -50,11 +54,6 @@ class TestDataBase(unittest.TestCase):
             cur.execute(f'SELECT name FROM sqlite_master WHERE name="{table_name}"')
             tables = cur.fetchall()
             self.assertTrue(tables)
-
-    # def test_get_asset_uuid(self):
-    #     with self.assertRaises(Exception) as context:
-    #         db.get_asset_uuid(asset_name="not-found")
-    #     self.assertTrue("Asset 'not-found' not found" == str(context.exception))
 
     def test_add_asset(self):
 
@@ -129,6 +128,7 @@ class TestDataBase(unittest.TestCase):
 
 # Main Function
 def main():
+    unittest.main()
     pass
 
 

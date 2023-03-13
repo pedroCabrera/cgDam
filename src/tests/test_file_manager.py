@@ -12,10 +12,11 @@ import platform
 
 import unittest
 
+os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
 
-DJED_ROOT = os.getenv('DJED_ROOT')
-utils_path = os.path.join(DJED_ROOT, 'src')
-sysPaths = [DJED_ROOT, utils_path]
+CgDamROOT = os.getenv('CgDamROOT')
+utils_path = os.path.join(CgDamROOT, 'src')
+sysPaths = [CgDamROOT, utils_path]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:
@@ -39,7 +40,7 @@ class TestFileManager(unittest.TestCase):
 
             self.assertEqual(
                 user_document_dir,
-                f"C:/Users/{os.environ['USERNAME']}/Documents/Djed"
+                f"C:/Users/{os.environ['USERNAME']}/Documents/cgDam"
             )
 
     def test_resolve_path(self):
@@ -59,6 +60,7 @@ class TestFileManager(unittest.TestCase):
 
 # Main Function
 def main():
+    unittest.main()
     pass
 
 

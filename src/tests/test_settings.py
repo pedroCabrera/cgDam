@@ -10,9 +10,11 @@ import os
 
 import unittest
 
-DJED_ROOT = os.getenv('DJED_ROOT')
-utils_path = os.path.join(DJED_ROOT, 'src')
-sysPaths = [DJED_ROOT, utils_path]
+os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
+
+CgDamROOT = os.getenv('CgDamROOT')
+utils_path = os.path.join(CgDamROOT, 'src')
+sysPaths = [CgDamROOT, utils_path]
 
 for sysPath in sysPaths:
     if sysPath not in sys.path:
