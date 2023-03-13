@@ -416,7 +416,9 @@ class AssetsDB(Connect):
         '''
         cur.execute(query)
     
-    def get_category_from_tree(self, cur, asset_category, asset_type_name):
+    @Connect.db
+    def get_category_from_tree(self, conn, asset_category, asset_type_name):
+        cur = conn.cursor()
         category_tree = asset_category.split("/")
         asset_category_id = cur.execute(f'''SELECT id FROM categories 
                                             WHERE name="{category_tree[0]}" 
@@ -435,7 +437,7 @@ class AssetsDB(Connect):
     def get_tree_from_category(self, conn, asset_category, asset_type_name):
         cur = conn.cursor()
         if isinstance(asset_category, str):
-            asset_category_id = self.get_category_from_tree(cur,asset_category=asset_category,asset_type_name=asset_type_name)
+            asset_category_id = self.get_category_from_tree(asset_category=asset_category,asset_type_name=asset_type_name)
         elif isinstance(asset_category,int):
             asset_category_id = asset_category
         else:
@@ -465,7 +467,7 @@ class AssetsDB(Connect):
     @Connect.db
     def get_all_children_categories(self, conn, asset_category,asset_type_name):
         cur = conn.cursor()
-        asset_category_id = self.get_category_from_tree(cur,asset_category,asset_type_name)
+        asset_category_id = self.get_category_from_tree(asset_category = asset_category,asset_type_name= asset_type_name)
         query = f'''
                 WITH RECURSIVE recursive_cte(id, name, parent_id, asset_type_id) AS (
                     SELECT id, name, parent_id, asset_type_id
@@ -491,7 +493,7 @@ class AssetsDB(Connect):
          
         parent_id = None
         if parent_category:
-            parent_id = self.get_category_from_tree(cur,parent_category)
+            parent_id = self.get_category_from_tree(asset_category = parent_category,asset_type_name= asset_type_name)
             if not parent_id:
                 raise Exception("Specify a valid parent Category")
                 return
@@ -514,7 +516,7 @@ class AssetsDB(Connect):
         if not asset_type_id:
             raise Exception("You must specify a valid asset type to register an asset")
             return
-        asset_category_id = self.get_category_from_tree(cur,asset_category)      
+        asset_category_id = self.get_category_from_tree(asset_category= asset_category, asset_type_name= asset_type)      
         if not asset_category_id:
             raise Exception("You must specify a valid asset category to register an asset")
             return            
@@ -729,7 +731,7 @@ class AssetsDB(Connect):
             asset_type_text = f'WHERE asset_type_id = (SELECT id from asset_types WHERE name="{asset_type_name}")'
         if asset_category:
             if not recursive_category:
-                asset_category_id = self.get_category_from_tree(cur,asset_category,asset_type_name)
+                asset_category_id = self.get_category_from_tree(asset_category=asset_category,asset_type_name= asset_type_name)
                 asset_type_text += f' AND asset_category_id = "{asset_category_id}"'
             else:
                 asset_category_id_list = self.get_all_children_categories(asset_category=asset_category,asset_type_name=asset_type_name)

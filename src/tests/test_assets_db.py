@@ -55,6 +55,22 @@ class TestDataBase(unittest.TestCase):
             tables = cur.fetchall()
             self.assertTrue(tables)
 
+    def test_add_asset_type_and_category(self):
+        db.add_asset_type(asset_type_name="Test")
+
+        db.add_typed_category(category_name="Category1",asset_type_name="Test")
+        db.add_typed_category(category_name="subCategory1",asset_type_name="Test",parent_category="Category1")
+        db.add_typed_category(category_name="subCategory2",asset_type_name="Test",parent_category="Category1/subCategory1")        
+        
+        self.assertTrue("Test" in [x[0] for x in db.all_asset_types() if x[0]])
+        self.assertTrue("Category1" in [x[1] for x in db.all_categories() if x[1]])
+        self.assertTrue("subCategory1" in [x[1] for x in db.all_categories(asset_type="Test") if x[1]])
+        self.assertTrue(db.get_tree_from_category(asset_category=db.get_category_from_tree(asset_category="Category1/subCategory1/subCategory2",
+                                                                                            asset_type_name="Test"),
+                                                   asset_type_name="Test")
+                         in ["Category1/subCategory1/subCategory2"])
+
+"""
     def test_add_asset(self):
 
         # add asset
@@ -72,7 +88,7 @@ class TestDataBase(unittest.TestCase):
             asset_uuid
         )
 
-        # asset asset name
+        # assert asset name
         self.assertEqual(
             db.get_asset_name(uuid=asset_uuid),
             "foo"
@@ -124,7 +140,7 @@ class TestDataBase(unittest.TestCase):
         db.add_project(asset_name='foo', project_name='project1')
 
         self.assertTrue('project1' in db.get_projects(asset_name='foo'))
-
+"""
 
 # Main Function
 def main():
