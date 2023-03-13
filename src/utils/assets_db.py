@@ -510,13 +510,13 @@ class AssetsDB(Connect):
         cur.execute(query)
     
     @Connect.db
-    def add_asset(self, conn, asset_name, asset_type, asset_category):
+    def add_asset(self, conn, asset_name, asset_type_name, asset_category):
         cur = conn.cursor()
-        asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type}";').fetchone()[0]
+        asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type_name}";').fetchone()[0]
         if not asset_type_id:
             raise Exception("You must specify a valid asset type to register an asset")
             return
-        asset_category_id = self.get_category_from_tree(asset_category= asset_category, asset_type_name= asset_type)      
+        asset_category_id = self.get_category_from_tree(asset_category= asset_category, asset_type_name= asset_type_name)      
         if not asset_category_id:
             raise Exception("You must specify a valid asset category to register an asset")
             return            
@@ -834,9 +834,9 @@ class AssetsDB(Connect):
         return [x[0] for x in tags if x[0]]
     
     @Connect.db
-    def all_categories(self, conn, asset_type=None):
+    def all_categories(self, conn, asset_type_name=None):
         cur = conn.cursor()
-        if asset_type== None:
+        if asset_type_name== None:
             query = f'''
                     SELECT id, name, parent_id, asset_type_id FROM categories
                     ORDER BY 
@@ -846,7 +846,7 @@ class AssetsDB(Connect):
             query = f'''
                     SELECT id, name, parent_id, asset_type_id FROM categories
                     WHERE 
-                    asset_type_id=(SELECT id from asset_types WHERE name="{asset_type}")
+                    asset_type_id=(SELECT id from asset_types WHERE name="{asset_type_name}")
                     ORDER BY 
                     id            
             '''
@@ -939,19 +939,19 @@ def main():
     db.add_typed_category(category_name="indor",asset_type_name="3D Asset",parent_category="muebles/mesas")
     db.add_typed_category(category_name="outdor",asset_type_name="3D Asset",parent_category="muebles/mesas")  
     
-    db.add_asset(asset_name="sofa_exterior",asset_type="3D Asset",asset_category="muebles/sofas/outdor")
-    db.add_asset(asset_name="mesa_interior",asset_type="3D Asset",asset_category="muebles/mesas/indor")
+    db.add_asset(asset_name="sofa_exterior",asset_type_name="3D Asset",asset_category="muebles/sofas/outdor")
+    db.add_asset(asset_name="mesa_interior",asset_type_name="3D Asset",asset_category="muebles/mesas/indor")
     
 
     #db.add_typed_category(category_name="random",asset_type_name="Textures")
-    db.add_asset(asset_name="texture_test",asset_type="Textures",asset_category="random")
+    db.add_asset(asset_name="texture_test",asset_type_name="Textures",asset_category="random")
     """
     #print(db.get_all_children_categories(asset_category="muebles/sofas"))
     #print(db.get_tree_from_category(asset_category="muebles/sofas"))
     #print(db.get_tree_from_category(asset_category=7))
     print(db.get_assets_data())
     #for i in range(50):
-    #    db.add_asset(asset_name=f"texture_new_{i}",asset_type="Textures")
+    #    db.add_asset(asset_name=f"texture_new_{i}",asset_type_name="Textures")
     #print(db.all_asset_types())
 
     #data = {'foo': 'bar'}

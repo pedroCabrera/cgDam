@@ -393,7 +393,7 @@ class Maya:
         attr_name = "materialBinding"
         self.add_attr_to_shapes([asset_name], attr_name)
 
-        db.add_asset(asset_name=asset_name,asset_type="3D Asset")
+        db.add_asset(asset_name=asset_name,asset_type_name="3D Asset")
         db.add_geometry(asset_name=asset_name, source_file=self.get_file_path())
 
         export_paths = {}

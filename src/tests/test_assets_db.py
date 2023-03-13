@@ -64,17 +64,17 @@ class TestDataBase(unittest.TestCase):
         
         self.assertTrue("Test" in [x[0] for x in db.all_asset_types() if x[0]])
         self.assertTrue("Category1" in [x[1] for x in db.all_categories() if x[1]])
-        self.assertTrue("subCategory1" in [x[1] for x in db.all_categories(asset_type="Test") if x[1]])
+        self.assertTrue("subCategory1" in [x[1] for x in db.all_categories(asset_type_name="Test") if x[1]])
         self.assertTrue(db.get_tree_from_category(asset_category=db.get_category_from_tree(asset_category="Category1/subCategory1/subCategory2",
                                                                                             asset_type_name="Test"),
                                                    asset_type_name="Test")
                          in ["Category1/subCategory1/subCategory2"])
+        self.assertTrue(db.get_all_children_categories(asset_category="Category1/subCategory1",asset_type_name="Test") in [[2,3]])
 
-"""
     def test_add_asset(self):
 
         # add asset
-        db.add_asset(asset_name="foo")
+        db.add_asset(asset_name="foo",asset_category="Category1/subCategory1",asset_type_name="Test")
 
         # assert UUID
         asset_uuid = db.get_asset_uuid(asset_name="foo")
@@ -93,7 +93,7 @@ class TestDataBase(unittest.TestCase):
             db.get_asset_name(uuid=asset_uuid),
             "foo"
         )
-
+"""
     def test_add_geometry(self):
 
         # reset all

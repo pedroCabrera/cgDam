@@ -258,7 +258,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         database_data = db.get_assets_data(asset_type_name=self.asset_type_selector.currentText(),asset_category=category)
         self.img_iter = iter(database_data)
         
-    def populate_asset_types(self,asset_type=None):
+    def populate_asset_types(self):
         asset_types = [x[0] for x in db.all_asset_types() if x[0]]
         self.asset_type_selector.addItems(asset_types)
 
@@ -274,7 +274,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
     def change_asset_type(self, asset_type):
         self.treemodel.removeRows( 0, self.treemodel.rowCount() )
         items = {}        
-        for id, name, parent, type in db.all_categories(asset_type=asset_type):
+        for id, name, parent, type in db.all_categories(asset_type_name=asset_type):
             item = QStandardItem(name)
             item.setData(db.get_tree_from_category(asset_category=id,asset_type_name=asset_type), ItemRoles.AssetCategory)
             items[id] = item
