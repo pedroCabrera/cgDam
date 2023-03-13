@@ -37,6 +37,7 @@ class ItemRoles():
     Tags = Qt.UserRole + 13
     Projects = Qt.UserRole + 14
     AssetType = Qt.UserRole + 15
+    AssetCategory = Qt.UserRole + 16
 
 
 def add_checkable_action(qmenu, name, checked=True):
@@ -84,7 +85,6 @@ class AssetItemWidget(QWidget):
         painter.drawText(self.rect(), Qt.AlignCenter, self.label_text)
         painter.restore()
 
-
 class CustomProxyFilter(QSortFilterProxyModel):
 
     def __init__(self):
@@ -126,7 +126,6 @@ class CustomProxyFilter(QSortFilterProxyModel):
         return (self.is_match([asset_name]) and self.search_filter.get('names')) \
                or (self.is_match(tags) and self.search_filter.get('tags')) \
                or (self.is_match(projects) and self.search_filter.get('projects'))
-
 
 class ListView(QListView):
     def __init__(self, parent=None):
@@ -194,7 +193,6 @@ class ListView(QListView):
         # if event.mimeData().hasUrls():
         # event.accept()
 
-
 class AssetItem(QStandardItem):
     def __init__(self, data):
         super(AssetItem, self).__init__()
@@ -204,6 +202,7 @@ class AssetItem(QStandardItem):
         self.setText(data.get("asset_name"))
         self.setData(data.get("uuid"), ItemRoles.UUID)
         self.setData(data.get("asset_type"), ItemRoles.AssetType)
+        self.setData(data.get("asset_category"), ItemRoles.AssetCategory)
         self.setData(data.get("asset_name"), ItemRoles.AssetName)
         self.setData(data.get("thumb_path"), ItemRoles.Thumbnail)
         self.setData(data.get("asset_id"), ItemRoles.AssetID)
@@ -217,7 +216,6 @@ class AssetItem(QStandardItem):
         self.setData(data.get("spp_path"), ItemRoles.SPP)
         self.setData(data.get("tags"), ItemRoles.Tags)
         self.setData(data.get("projects"), ItemRoles.Projects)
-
 
 class LineEdit(QLineEdit):
     def __init__(self, parent=None):
@@ -246,9 +244,6 @@ class LineEdit(QLineEdit):
         if event.key() == Qt.Key_Escape:
             self.clear()
         QLineEdit.keyPressEvent(self, event)
-
-
-
 
 class WScreenShot(QWidget):
 

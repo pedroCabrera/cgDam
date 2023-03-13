@@ -109,12 +109,13 @@ class AssetsDB(Connect):
                 CREATE TABLE IF NOT EXISTS {table_name} (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
-                asset_type_name TEXT,
+                asset_type_id INTEGER,
+                asset_category_id INTEGER,
                 creation_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 modification_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 uuid TEXT DEFAULT (lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)))),
-                UNIQUE(name),
-                FOREIGN KEY (asset_type_name) REFERENCES asset_types (name) ON DELETE SET DEFAULT
+                UNIQUE(name, asset_type_id),
+                FOREIGN KEY (asset_type_id) REFERENCES asset_types (id) ON DELETE SET DEFAULT
                 );
         '''
         cur.execute(query)
@@ -240,26 +241,9 @@ class AssetsDB(Connect):
                     name TEXT,
                     parent_id INTEGER,
                     asset_type_id INTEGER,
-                    UNIQUE(name),
+                    UNIQUE(name, parent_id),
                     FOREIGN KEY (parent_id) REFERENCES categories (id) ON DELETE CASCADE
                     FOREIGN KEY (asset_type_id) REFERENCES asset_types (id) ON DELETE CASCADE
-                    );
-        '''
-        cur.execute(query)
-
-    @Connect.db
-    def create_asset_category_table(self, conn):
-        table_name = "asset_category"
-
-        # self.delete_table(table_name=table_name)
-        cur = conn.cursor()
-        query = f'''
-                    CREATE TABLE IF NOT EXISTS {table_name} (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    asset_id INTEGER,
-                    category_id INTEGER,
-                    FOREIGN KEY (asset_id) REFERENCES assets (id) ON DELETE CASCADE
-                    FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
                     );
         '''
         cur.execute(query)
@@ -326,7 +310,6 @@ class AssetsDB(Connect):
 
         self.create_asset_types_table()
         self.create_category_table()
-        self.create_asset_category_table()
 
     @Connect.db
     def get_last_id(self, conn):
@@ -415,7 +398,63 @@ class AssetsDB(Connect):
             cur.execute(query)
         except:
             print(f"Error creating asset type{asset_type_name}")
+    
+    def get_category_from_tree(self, cur, asset_category):
+        category_tree = asset_category.split("/")
+        asset_category_id = cur.execute(f'SELECT id FROM categories WHERE name="{category_tree[0]}";').fetchone()[0]
+        if len(category_tree)>1:
+            for parent_category in category_tree[1:]:
+                asset_category_id = cur.execute(f'SELECT id FROM categories WHERE name="{parent_category}" AND parent_id ="{asset_category_id}";').fetchone()[0]
+        return asset_category_id
+    
+    @Connect.db
+    def get_tree_from_category(self, conn, asset_category):
+        cur = conn.cursor()
+        if isinstance(asset_category, str):
+            asset_category_id = self.get_category_from_tree(cur,asset_category=asset_category)
+        elif isinstance(asset_category,int):
+            asset_category_id = asset_category
+        else:
+            raise Exception("You must specify a valid asset_category or asset_category_id")
+            return
+        query = f'''
+                WITH RECURSIVE parent_names AS (
+                    SELECT id, name, parent_id
+                    FROM categories
+                    WHERE id = {asset_category_id}
+                    
+                    UNION ALL
+                    
+                    SELECT at.id, at.name, at.parent_id
+                    FROM categories at
+                    JOIN parent_names pn ON at.id = pn.parent_id
+                )
+                SELECT name
+                FROM parent_names;        
+                '''
+        categories = [x[0] for x in cur.execute(query).fetchall() if x]
+        categories.reverse()
+        return "/".join(categories)
 
+    @Connect.db
+    def get_all_children_categories(self, conn, asset_category):
+        cur = conn.cursor()
+        asset_category_id = self.get_category_from_tree(cur,asset_category)
+        query = f'''
+                WITH RECURSIVE recursive_cte(id, name, parent_id, asset_type_id) AS (
+                    SELECT id, name, parent_id, asset_type_id
+                    FROM categories
+                    WHERE id = {asset_category_id}
+                    UNION ALL
+                    SELECT t.id, t.name, t.parent_id, t.asset_type_id
+                    FROM categories t
+                    JOIN recursive_cte r ON t.parent_id = r.id
+                )
+                SELECT id
+                FROM recursive_cte;        
+                '''      
+        return [x[0] for x in cur.execute(query).fetchall() if x]
+    
     @Connect.db
     def add_typed_category(self, conn, category_name, asset_type_name, parent_category = None):
         cur = conn.cursor()
@@ -426,11 +465,11 @@ class AssetsDB(Connect):
          
         parent_id = None
         if parent_category:
-            parent_id = cur.execute(f'SELECT id FROM categories WHERE name="{parent_category}";').fetchone()
+            parent_id = self.get_category_from_tree(cur,parent_category)
             if not parent_id:
                 raise Exception("Specify a valid parent Category")
                 return
-            parent_id = parent_id[0]       
+            #parent_id = parent_id[0]       
         query = f'''
                 INSERT INTO categories 
                 (name, parent_id, asset_type_id)
@@ -440,21 +479,25 @@ class AssetsDB(Connect):
         cur.execute(query)
     
     @Connect.db
-    def add_asset(self, conn, asset_name, asset_type):
+    def add_asset(self, conn, asset_name, asset_type, asset_category):
         cur = conn.cursor()
-        asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type}";').fetchone()
+        asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type}";').fetchone()[0]
         if not asset_type_id:
             raise Exception("You must specify a valid asset type to register an asset")
             return
+        asset_category_id = self.get_category_from_tree(cur,asset_category)      
+        if not asset_category_id:
+            raise Exception("You must specify a valid asset category to register an asset")
+            return            
         now = datetime.datetime.now()
         current_date = now.strftime("%Y/%m/%d, %H:%M:%S")
         
         query = f'''
                 INSERT INTO assets 
-                (name, asset_type_name, modification_date)
+                (name, asset_type_id, asset_category_id, modification_date)
                 VALUES
-                ("{asset_name}", "{asset_type}", "{current_date}")
-                ON CONFLICT(name) 
+                ("{asset_name}", "{asset_type_id}", "{asset_category_id}", "{current_date}")
+                ON CONFLICT(name, asset_type_id) 
                 DO UPDATE
                 SET modification_date = "{current_date}";
         '''
@@ -628,14 +671,25 @@ class AssetsDB(Connect):
         return materials
 
     @Connect.db
-    def get_assets_data(self, conn):
-
+    def get_assets_data(self, conn, asset_type_name=None, asset_category=None, recursive_category = True):
         cur = conn.cursor()
+        asset_type_text = ""
+        if asset_type_name:
+            asset_type_text = f'WHERE asset_type_id = (SELECT id from asset_types WHERE name="{asset_type_name}")'
+        if asset_category:
+            if not recursive_category:
+                asset_category_id = self.get_category_from_tree(cur,asset_category)
+                asset_type_text += f' AND asset_category_id = "{asset_category_id}"'
+            else:
+                asset_category_id_list = self.get_all_children_categories(asset_category=asset_category)
+                asset_category_id_list = ",".join([str(x) for x in asset_category_id_list])
+                asset_type_text += f' AND asset_category_id IN ({asset_category_id_list});'
         query = f'''
-                SELECT * FROM 
-                assets 
-                LEFT JOIN geometry ON assets.id=geometry.asset_id
-
+                SELECT a.id, a.name, at.name AS asset_type, a.asset_category_id, a.creation_date, a.modification_date, a.uuid, g.*
+                FROM assets a
+                INNER JOIN asset_types at ON a.asset_type_id = at.id
+                LEFT JOIN geometry g ON a.id = g.asset_id             
+                {asset_type_text}
         '''
         cur.execute(query)
         data = cur.fetchall()
@@ -818,15 +872,33 @@ class AssetsDB(Connect):
 # Main Function
 def main():
     db = AssetsDB()
-    """
+    
     db.add_asset_type(asset_type_name="3D Asset")
     db.add_asset_type(asset_type_name="Textures")
     db.add_asset_type(asset_type_name="Shaders")
     db.add_asset_type(asset_type_name="HDRI")
-
-    db.add_asset(asset_name="test_1",asset_type="3D Asset")
-    db.add_asset(asset_name="test_2",asset_type="Textures")
     """
+    db.add_typed_category(category_name="muebles",asset_type_name="3D Asset")
+    db.add_typed_category(category_name="sofas",asset_type_name="3D Asset",parent_category="muebles")
+    db.add_typed_category(category_name="indor",asset_type_name="3D Asset",parent_category="muebles/sofas")
+    db.add_typed_category(category_name="outdor",asset_type_name="3D Asset",parent_category="muebles/sofas")
+    db.add_typed_category(category_name="mesas",asset_type_name="3D Asset",parent_category="muebles")
+    db.add_typed_category(category_name="indor",asset_type_name="3D Asset",parent_category="muebles/mesas")
+    db.add_typed_category(category_name="outdor",asset_type_name="3D Asset",parent_category="muebles/mesas")  
+    
+    db.add_asset(asset_name="sofa_exterior",asset_type="3D Asset",asset_category="muebles/sofas/outdor")
+    db.add_asset(asset_name="mesa_interior",asset_type="3D Asset",asset_category="muebles/mesas/indor")
+    
+
+    #db.add_typed_category(category_name="random",asset_type_name="Textures")
+    db.add_asset(asset_name="texture_test",asset_type="Textures",asset_category="random")
+    """
+    #print(db.get_all_children_categories(asset_category="muebles/sofas"))
+    #print(db.get_tree_from_category(asset_category="muebles/sofas"))
+    #print(db.get_tree_from_category(asset_category=7))
+    print(db.get_assets_data())
+    #for i in range(50):
+    #    db.add_asset(asset_name=f"texture_new_{i}",asset_type="Textures")
     #print(db.all_asset_types())
 
     #data = json.dumps({'foo': 'bar'})

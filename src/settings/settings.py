@@ -299,7 +299,7 @@ if __name__ == '__main__':
     #save_encoded_cfg_data(a,path=user_settings_dir)
     #print(get_colorspace_settings())
     #print(get_textures_settings())
-    print(get_dcc_cfg('maya','configuration',"executable"))
+    #print(get_dcc_cfg('maya','configuration',"executable"))
     #print(get_material_attrs("maya","arnold"))
     #print(get_material_type_names("maya"))
     #print(get_shading_nodes("maya","arnold"))

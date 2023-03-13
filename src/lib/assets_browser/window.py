@@ -160,9 +160,10 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         self.init_win()
         self.connect_events()
 
-        self.populate_items()
-        self.populate_categories()
         self.populate_asset_types()
+        
+        self.populate_items()
+
 
     def init_win(self):
         title = "Asset Browser"
@@ -211,6 +212,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
 
         # category tree
         self.treemodel = QStandardItemModel()
+
         self.treeView.setModel(self.treemodel)
 
         # actions
@@ -222,6 +224,9 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
 
         # Asset Type
         self.asset_type_selector.currentTextChanged.connect(self.change_asset_type)
+        
+        # Category Tree
+        self.treeView.clicked.connect(self.changeCategory)
 
         # list view
         self.lw_assets.doubleClicked.connect(self.on_item_double_clicked)
@@ -245,34 +250,39 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         self.tags_filter_cb.stateChanged.connect(self.on_filter_changed)
         self.projects_filter_cb.stateChanged.connect(self.on_filter_changed)
 
-    def populate_items(self):
+    def populate_items(self,category=None):
         self.timer = QTimer(self)
         self.timer.timeout.connect(lambda: self.add_item())
         self.timer.start(50)
         self.lw_assets.set_timer(self.timer)
-
-        database_data = db.get_assets_data()
-
+        database_data = db.get_assets_data(asset_type_name=self.asset_type_selector.currentText(),asset_category=category)
         self.img_iter = iter(database_data)
         
     def populate_asset_types(self,asset_type=None):
         asset_types = [x[0] for x in db.all_asset_types() if x[0]]
         self.asset_type_selector.addItems(asset_types)
 
+    def changeCategory(self, index):
+        text = ""
+        data =index.data()
+        while index.parent().isValid():
+            index = index.parent()
+            text = f"{index.data()}/{text}"
+        text += data
+        self.refresh(category = text)
+
     def change_asset_type(self, asset_type):
         self.treemodel.removeRows( 0, self.treemodel.rowCount() )
         items = {}        
         for id, name, parent, type in db.all_categories(asset_type=asset_type):
             item = QStandardItem(name)
+            item.setData(db.get_tree_from_category(asset_category=id), ItemRoles.AssetCategory)
             items[id] = item
             if parent and parent != "None":
                 items[parent].appendRow(item)
             else:
-                self.treemodel.appendRow(item)   
-
-    def populate_categories(self):
-        for asset_type in db.all_asset_types():
-            self.change_asset_type(asset_type[0])
+                self.treemodel.appendRow(item)
+        self.refresh()
 
     def add_item(self):
         try:
@@ -285,15 +295,16 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
                 "asset_id": row[0],
                 "asset_name": row[1],
                 "asset_type": row[2],
-                "creation_date": row[3],
-                "modification_date": row[4],
-                "uuid": row[5],
-                "obj_path": row[8],
-                "usd_path": row[9],
-                "abc_path": row[10],
-                "fbx_path": row[11],
-                "ma_path": row[12],
-                "spp_path": row[13],
+                "asset_category": db.get_tree_from_category(asset_category=row[3]),
+                "creation_date": row[4],
+                "modification_date": row[5],
+                "uuid": row[6],
+                "obj_path": row[9],
+                "usd_path": row[10],
+                "abc_path": row[11],
+                "fbx_path": row[12],
+                "ma_path": row[13],
+                "spp_path": row[14],
                 "thumb_path": thumb_path,
                 "tags": db.get_tags(asset_name=row[1]),
                 "projects": db.get_projects(asset_name=row[1])
@@ -578,9 +589,9 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         db.set_thumbnail(asset_id=index.data(ItemRoles.AssetID), thumb_path=thumb_path)
         self.refresh()
 
-    def refresh(self):
+    def refresh(self,category=None):
         self.lw_assets.data_model.clear()
-        self.populate_items()
+        self.populate_items(category=category)
 
     def select_item(self, index):
         self.lw_assets.selectionModel().setCurrentIndex(index, QItemSelectionModel.Current)
