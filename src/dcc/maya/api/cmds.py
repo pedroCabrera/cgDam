@@ -393,25 +393,25 @@ class Maya:
         attr_name = "materialBinding"
         self.add_attr_to_shapes([asset_name], attr_name)
 
-        db.add_asset(asset_name=asset_name,asset_type_name="3D Asset")
-        db.add_geometry(asset_name=asset_name, source_file=self.get_file_path())
+        asset_name,asset_id = db.add_asset(asset_name=asset_name,asset_type_name="3D Asset")
+        db.add_geometry(asset_id=asset_id, source_file=self.get_file_path())
 
         export_paths = {}
         for ext in export_type:
             if ext == "obj":
-                db.add_geometry(asset_name=asset_name, obj_file=export_path + "." + ext)
+                db.add_geometry(asset_id=asset_id, obj_file=export_path + "." + ext)
                 cmds.file(export_path, es=1, f=1, typ="OBJexport",
                           options="groups=1;ptgroups=1;materials=1;smoothing=1;normals=1")
                 export_paths[ext] = export_path + "." + ext
 
             elif ext == "fbx":
-                db.add_geometry(asset_name=asset_name, fbx_file=export_path + "." + ext)
+                db.add_geometry(asset_id=asset_id, fbx_file=export_path + "." + ext)
                 cmds.file(export_path, es=1, f=1, typ="FBX export",
                           options="groups=1;ptgroups=1;materials=1;smoothing=1;normals=1")
                 export_paths[ext] = export_path + "." + ext
 
             elif ext == "abc":
-                db.add_geometry(asset_name=asset_name, abc_file=export_path + "." + ext)
+                db.add_geometry(asset_id=asset_id, abc_file=export_path + "." + ext)
                 frameRange = (self.current_frame(), self.current_frame())
                 abcOptions = f" -attr {attr_name} -uvWrite -writeFaceSets -worldSpace -writeVisibility -writeUVSets -dataFormat ogawa"
                 root = " -root " + " -root ".join([asset_name])
@@ -444,7 +444,7 @@ class Maya:
                 options += "mergeTransformAndShape=1;"
                 options += "stripNamespaces=0"
 
-                db.add_geometry(asset_name=asset_name, usd_geo_file=export_path + "." + ext)
+                db.add_geometry(asset_id=asset_id, usd_geo_file=export_path + "." + ext)
                 cmds.file(export_path, es=1, f=1, typ="USD Export", options=options)
                 export_paths[ext] = export_path + "." + ext
 

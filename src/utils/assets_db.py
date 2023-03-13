@@ -324,21 +324,16 @@ class AssetsDB(Connect):
         cur.execute("SELECT last_insert_rowid();")
         ids = cur.fetchall()
         return ids[0][0]
-
+  
     @Connect.db
-    def get_asset_id(self, conn, asset_name):
+    def get_asset_uuid(self, conn, asset_name, asset_category, asset_type_name):
         cur = conn.cursor()
-        cur.execute(f'SELECT id from assets WHERE name="{asset_name}"')
-        ids = cur.fetchone()
-        if ids:
-            return ids[0]
-        else:
-            return 0
-    
-    @Connect.db
-    def get_asset_uuid(self, conn, asset_name):
-        cur = conn.cursor()
-        cur.execute(f'SELECT uuid from assets WHERE name="{asset_name}"')
+        asset_category_id = self.get_category_from_tree(asset_category= asset_category, asset_type_name= asset_type_name)
+        cur.execute(f'''SELECT uuid from assets
+                     WHERE name="{asset_name}" 
+                     AND asset_type_id = (SELECT id FROM asset_types WHERE name="{asset_type_name}")
+                     AND asset_category_id = (SELECT id FROM categories WHERE id="{asset_category_id}")
+                     ''')
         uuids = cur.fetchone()
         if uuids:
             return uuids[0]
@@ -354,7 +349,17 @@ class AssetsDB(Connect):
             return names[0]
         else:
             return ""
-
+        
+    @Connect.db
+    def get_asset_id(self, conn, uuid):
+        cur = conn.cursor()
+        cur.execute(f'SELECT id from assets WHERE uuid="{uuid}"')
+        ids = cur.fetchone()
+        if ids:
+            return ids[0]
+        else:
+            return None
+        
     @Connect.db
     def get_latest_edit_asset_name(self, conn):
         cur = conn.cursor()
@@ -368,7 +373,7 @@ class AssetsDB(Connect):
             return data[0][0]
 
     @Connect.db
-    def update_date(self, conn, asset_name):
+    def update_date(self, conn, asset_id):
         now = datetime.datetime.now()
         current_date = now.strftime("%Y-%m-%d, %H:%M:%S")
         cur = conn.cursor()
@@ -376,7 +381,7 @@ class AssetsDB(Connect):
                 UPDATE assets 
                 SET modification_date = "{current_date}"
                 WHERE
-                name = "{asset_name}"
+                id = "{asset_id}"              
         '''
         cur.execute(query)
 
@@ -528,22 +533,29 @@ class AssetsDB(Connect):
                 (name, asset_type_id, asset_category_id, modification_date)
                 VALUES
                 ("{asset_name}", "{asset_type_id}", "{asset_category_id}", "{current_date}")
-                ON CONFLICT(name, asset_type_id) 
+                ON CONFLICT(name, asset_type_id, asset_category_id) 
                 DO UPDATE
                 SET modification_date = "{current_date}";
         '''
         cur.execute(query)
+        query = f'''
+                SELECT name,id from assets
+                WHERE
+                name = "{asset_name}"
+                AND asset_type_id = (SELECT id FROM asset_types WHERE name="{asset_type_name}")
+                AND asset_category_id = (SELECT id FROM categories WHERE id="{asset_category_id}")   
+                '''  
+        return cur.execute(query).fetchone()  
 
     @Connect.db
-    def add_geometry(self, conn, asset_name, **kwargs):
-
+    def add_geometry(self, conn, asset_id, **kwargs):
         '''obj_file="", usd_geo_file="", abc_file="", fbx_file="", source_file="", substance_file="", mesh_data=""'''
-        self.update_date(asset_name=asset_name)
+        self.update_date(asset_id=asset_id)
         for col in kwargs:
             value = kwargs.get(col)
             # get mesh data
             if isinstance(value, dict):
-                old_data = self.get_geometry(asset_name=asset_name, mesh_data="")
+                old_data = self.get_geometry(asset_id=asset_id, mesh_data="")
                 if not old_data:
                     old_data = {}
 
@@ -559,7 +571,7 @@ class AssetsDB(Connect):
                     INSERT INTO geometry 
                     (asset_id, {col})
                     VALUES
-                    ((SELECT id from assets WHERE name='{asset_name}'), '{value}')
+                    ('{asset_id}', '{value}')
                     ON CONFLICT(asset_id) 
                     DO UPDATE
                     SET {col} = '{value}';
@@ -568,14 +580,13 @@ class AssetsDB(Connect):
             cur.execute(query)
 
     @Connect.db
-    def get_geometry(self, conn, asset_name, **kwargs):
-
+    def get_geometry(self, conn, asset_id, **kwargs):
         cols = ", ".join(kwargs.keys())
         cur = conn.cursor()
         query = f'''
                 SELECT {cols} FROM geometry 
                 WHERE
-                asset_id = (SELECT id from assets WHERE name="{asset_name}")
+                asset_id = "{asset_id}"
         '''
         cur.execute(query)
         data = cur.fetchall()
@@ -590,7 +601,7 @@ class AssetsDB(Connect):
         return returned_dict
 
     @Connect.db
-    def add_tag(self, conn, asset_name, tag_name):
+    def add_tag(self, conn, asset_id, tag_name):
         cur = conn.cursor()
         tag_id = cur.execute(f'SELECT id FROM tags WHERE name="{tag_name}";').fetchone()
         if tag_id:
@@ -601,7 +612,7 @@ class AssetsDB(Connect):
 
         cur.execute(f'''SELECT asset_id, tag_id FROM asset_tags
                         WHERE 
-                        asset_id = (SELECT id FROM assets WHERE name = "{asset_name}")
+                        asset_id = "{asset_id}"
                         AND
                         tag_id = {tag_id}''')
 
@@ -609,12 +620,12 @@ class AssetsDB(Connect):
             query = f'''
                     INSERT INTO asset_tags (asset_id, tag_id) 
                     VALUES 
-                    ((SELECT id from assets WHERE name="{asset_name}"), {tag_id});
+                    ("{asset_id}", {tag_id});
             '''
             cur.execute(query)
 
     @Connect.db
-    def add_project(self, conn, asset_name, project_name):
+    def add_project(self, conn, asset_id, project_name):
         cur = conn.cursor()
         project_id = cur.execute(f'SELECT id FROM projects WHERE name="{project_name}";').fetchone()
         if project_id:
@@ -625,7 +636,7 @@ class AssetsDB(Connect):
 
         cur.execute(f'''SELECT asset_id, project_id FROM asset_projects
                         WHERE 
-                        asset_id = (SELECT id FROM assets WHERE name = "{asset_name}")
+                        asset_id = "{asset_id}"
                         AND
                         project_id = {project_id}''')
 
@@ -638,11 +649,11 @@ class AssetsDB(Connect):
             cur.execute(query)
 
     @Connect.db
-    def add_textures(self, conn, asset_name, map_type_name, texture_path, udim_num, material_name="", resolution=""):
+    def add_textures(self, conn, asset_id, map_type_name, texture_path, udim_num, material_name="", resolution=""):
         cur = conn.cursor()
         result = cur.execute(f'''SELECT texture_path FROM textures
                             WHERE
-                            asset_id = (SELECT id from assets WHERE name="{asset_name}")
+                            asset_id = "{asset_id}"
                             AND 
                             map_id = (SELECT id from map_type WHERE name="{map_type_name}")
                             AND
@@ -656,7 +667,7 @@ class AssetsDB(Connect):
                     INSERT INTO textures (asset_id, map_id, texture_path, udim_num, material_name, res)
                     VALUES
                     (
-                    (SELECT id from assets WHERE name="{asset_name}"),
+                    "{asset_id}",
                     (SELECT id from map_type WHERE name="{map_type_name}"),
                     "{texture_path}",
                     {udim_num},
@@ -672,7 +683,7 @@ class AssetsDB(Connect):
                     udim_num = {udim_num},
                     res = "{resolution}"
                     WHERE
-                    asset_id = (SELECT id from assets WHERE name="{asset_name}")
+                    asset_id = "{asset_id}"
                     AND
                     map_id = (SELECT id from map_type WHERE name="{map_type_name}")
                     AND
@@ -684,7 +695,6 @@ class AssetsDB(Connect):
 
     @Connect.db
     def get_textures(self, conn, uuid):
-
         materials = {}
 
         cur = conn.cursor()
@@ -751,11 +761,11 @@ class AssetsDB(Connect):
 
     @Connect.db
     def get_asset(self, conn, uuid):
-
         asset = {}
         asset_name = self.get_asset_name(uuid=uuid)
-        geometries = self.get_geometry(asset_name=asset_name, obj_file='', usd_geo_file='', abc_file='', fbx_file='')
-        asset_data = json.loads(self.get_geometry(asset_name=asset_name, mesh_data='')['mesh_data'])
+        asset_id = self.get_asset_id(uuid=uuid)
+        geometries = self.get_geometry(asset_id=asset_id, obj_file='', usd_geo_file='', abc_file='', fbx_file='')
+        asset_data = json.loads(self.get_geometry(asset_id=asset_id, mesh_data='')['mesh_data'])
         materials = self.get_textures(uuid=uuid)
 
         asset["name"] = asset_name
@@ -766,7 +776,7 @@ class AssetsDB(Connect):
         return asset
 
     @Connect.db
-    def get_tags(self, conn, asset_name):
+    def get_tags(self, conn, asset_id):
 
         cur = conn.cursor()
         query = f'''
@@ -776,7 +786,7 @@ class AssetsDB(Connect):
                     SELECT tag_id FROM 
                     asset_tags 
                     WHERE 
-                    asset_id = (SELECT id from assets WHERE name="{asset_name}")
+                    asset_id = "{asset_id}"
                 )
 
         '''
@@ -786,8 +796,7 @@ class AssetsDB(Connect):
         return [x[0] for x in tags if x[0]]
 
     @Connect.db
-    def get_projects(self, conn, asset_name):
-
+    def get_projects(self, conn, asset_id):
         cur = conn.cursor()
         query = f'''
                 SELECT name FROM projects
@@ -796,7 +805,7 @@ class AssetsDB(Connect):
                     SELECT project_id FROM 
                     asset_projects 
                     WHERE 
-                    asset_id = (SELECT id from assets WHERE name="{asset_name}")
+                    asset_id = "{asset_id}"
                 )
 
         '''
@@ -807,7 +816,6 @@ class AssetsDB(Connect):
 
     @Connect.db
     def all_asset_types(self, conn):
-
         cur = conn.cursor()
         query = f'''
                 SELECT name,id FROM asset_types
@@ -821,7 +829,6 @@ class AssetsDB(Connect):
     
     @Connect.db
     def all_tags(self, conn):
-
         cur = conn.cursor()
         query = f'''
                 SELECT name FROM tags
@@ -857,7 +864,6 @@ class AssetsDB(Connect):
 
     @Connect.db
     def all_projects(self, conn):
-
         cur = conn.cursor()
         query = f'''
                 SELECT name FROM projects
@@ -869,21 +875,14 @@ class AssetsDB(Connect):
 
         return [x[0] for x in projects if x[0]]
 
-    def delete_asset_projects(self, asset_name=None, asset_id=None):
-        if asset_id is None:
-            asset_id = self.get_asset_id(asset_name=asset_name)
+    def delete_asset_projects(self, asset_id=None):
         self.delete_row(table_name="asset_projects", col="asset_id", value=asset_id)
 
-    def delete_asset_tags(self, asset_name=None, asset_id=None):
-        if asset_id is None:
-            asset_id = self.get_asset_id(asset_name=asset_name)
+    def delete_asset_tags(self, asset_id=None):
         self.delete_row(table_name="asset_tags", col="asset_id", value=asset_id)
 
     @Connect.db
-    def set_thumbnail(self, conn, asset_name=None, asset_id=None, thumb_path=""):
-        if asset_id is None:
-            asset_id = self.get_asset_id(asset_name=asset_name)
-
+    def set_thumbnail(self, conn, asset_id=None, thumb_path=""):
         if thumb_path == "":
             return
         else:
@@ -903,9 +902,7 @@ class AssetsDB(Connect):
         return data
 
     @Connect.db
-    def get_thumbnail(self, conn, asset_name, latest=True):
-
-        asset_id = self.get_asset_id(asset_name=asset_name)
+    def get_thumbnail(self, conn, asset_id, latest=True):
         cur = conn.cursor()
         query = f'''
                 SELECT thumb_path FROM 

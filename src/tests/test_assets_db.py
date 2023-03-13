@@ -74,10 +74,10 @@ class TestDataBase(unittest.TestCase):
     def test_add_asset(self):
 
         # add asset
-        db.add_asset(asset_name="foo",asset_category="Category1/subCategory1",asset_type_name="Test")
+        id,name =db.add_asset(asset_name="foo1",asset_category="Category1/subCategory1",asset_type_name="Test")
 
         # assert UUID
-        asset_uuid = db.get_asset_uuid(asset_name="foo")
+        asset_uuid = db.get_asset_uuid(asset_name="foo1",asset_category="Category1/subCategory1",asset_type_name="Test")
 
         uuid_pattern = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$"
         self.assertTrue(
@@ -91,8 +91,9 @@ class TestDataBase(unittest.TestCase):
         # assert asset name
         self.assertEqual(
             db.get_asset_name(uuid=asset_uuid),
-            "foo"
+            "foo1"
         )
+
 """
     def test_add_geometry(self):
 

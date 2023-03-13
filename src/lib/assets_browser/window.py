@@ -288,7 +288,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
         try:
             row = next(self.img_iter)
 
-            thumb_path = db.get_thumbnail(asset_name=row[1], latest=True)
+            thumb_path = db.get_thumbnail(asset_id=row[0], latest=True)
             if not (thumb_path or os.path.isfile(str(thumb_path))):
                 thumb_path = ":/icons/empty_asset.png"
             item_data = {
@@ -306,8 +306,8 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
                 "ma_path": row[13],
                 "spp_path": row[14],
                 "thumb_path": thumb_path,
-                "tags": db.get_tags(asset_name=row[1]),
-                "projects": db.get_projects(asset_name=row[1])
+                "tags": db.get_tags(asset_id=row[0]),
+                "projects": db.get_projects(asset_id=row[0])
 
             }
 
@@ -551,11 +551,11 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
                 db.delete_asset_projects(asset_id=tags_win.index.data(ItemRoles.AssetID))
 
                 for project_name in new_tags:
-                    db.add_project(asset_name=tags_win.index.data(ItemRoles.AssetName), project_name=project_name)
+                    db.add_project(asset_id=tags_win.index.data(ItemRoles.AssetID), project_name=project_name)
             else:
                 db.delete_asset_tags(asset_id=tags_win.index.data(ItemRoles.AssetID))
                 for tag_name in new_tags:
-                    db.add_tag(asset_name=tags_win.index.data(ItemRoles.AssetName), tag_name=tag_name)
+                    db.add_tag(asset_id=tags_win.index.data(ItemRoles.AssetID), tag_name=tag_name)
 
             self.refresh()
             tags_win.close()
