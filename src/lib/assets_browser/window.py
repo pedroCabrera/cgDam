@@ -296,15 +296,16 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
                 "asset_name": row[1],
                 "asset_type": row[2],
                 "asset_category": db.get_tree_from_category(asset_category=row[3],asset_type_name=row[2]),
-                "creation_date": row[4],
-                "modification_date": row[5],
-                "uuid": row[6],
-                "obj_path": row[9],
-                "usd_path": row[10],
-                "abc_path": row[11],
-                "fbx_path": row[12],
-                "ma_path": row[13],
-                "spp_path": row[14],
+                "asset_path" : row[4],
+                "creation_date": row[5],
+                "modification_date": row[6],
+                "uuid": row[7],
+                "obj_path": row[10],
+                "usd_path": row[11],
+                "abc_path": row[12],
+                "fbx_path": row[13],
+                "ma_path": row[14],
+                "spp_path": row[15],
                 "thumb_path": thumb_path,
                 "tags": db.get_tags(asset_id=row[0]),
                 "projects": db.get_projects(asset_id=row[0])
@@ -351,7 +352,15 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
             self.table_data.header().hide()  # setHeaderLabels([""])
 
             assset_name_item = QTreeWidgetItem([index.data(ItemRoles.AssetName)])
-
+            asset_path = index.data(ItemRoles.AssetPath)
+            if asset_path == "None":
+                asset_path = "No Defined Asset Path"
+            else:
+                asset_path = db.resolve_asset_path({"name":index.data(ItemRoles.AssetName),
+                                    "path":asset_path,
+                                    "type":index.data(ItemRoles.AssetType),
+                                    "category":index.data(ItemRoles.AssetCategory)})                
+            assset_path_item = QTreeWidgetItem([asset_path])
             # Tags
             tag_item = QTreeWidgetItem(["Tags"])
             for tag in index.data(ItemRoles.Tags):
@@ -412,6 +421,7 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
                 type_item = QTreeWidgetItem([_type + ": " + value])
                 date_item.addChild(type_item)
 
+            self.table_data.addTopLevelItem(assset_path_item)
             self.table_data.addTopLevelItem(assset_name_item)
             self.table_data.addTopLevelItem(tag_item)
             self.table_data.addTopLevelItem(project_item)
@@ -423,7 +433,10 @@ class AssetViewWindow(QMainWindow, Ui_AssetBrowserWindow):
             tag_item.setExpanded(True)
             project_item.setExpanded(True)
             date_item.setExpanded(True)
-
+        else:
+            self.table_data.clear()
+            self.table_data.setColumnCount(1)
+                    
     def search_bar_key_event(self, event):
         if event.key() == Qt.Key_Escape:
             self.le_search.clear()

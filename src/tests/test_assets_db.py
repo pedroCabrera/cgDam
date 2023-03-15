@@ -146,6 +146,8 @@ class TestDataBase(unittest.TestCase):
 # Main Function
 def main():
     unittest.main()
+    #db_file = Connect.db_file
+    #print(db_file)
     pass
 
 

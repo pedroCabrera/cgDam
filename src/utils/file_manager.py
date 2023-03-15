@@ -49,7 +49,6 @@ class FileManager:
 
         return resolved_path.replace('\\', '/')
 
-
     def get_user_json(self, key, key1=None):
         json_path = self.user_documents.joinpath("cgDam.json")
 
@@ -77,7 +76,6 @@ class FileManager:
             data[key] = kwargs[key]
 
         self.write_json(json_path, data)
-
 
     def read_json(self, json_path):
         """

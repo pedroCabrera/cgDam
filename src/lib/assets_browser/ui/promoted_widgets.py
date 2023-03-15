@@ -38,6 +38,7 @@ class ItemRoles():
     Projects = Qt.UserRole + 14
     AssetType = Qt.UserRole + 15
     AssetCategory = Qt.UserRole + 16
+    AssetPath = Qt.UserRole + 17
 
 
 def add_checkable_action(qmenu, name, checked=True):
@@ -203,6 +204,7 @@ class AssetItem(QStandardItem):
         self.setData(data.get("uuid"), ItemRoles.UUID)
         self.setData(data.get("asset_type"), ItemRoles.AssetType)
         self.setData(data.get("asset_category"), ItemRoles.AssetCategory)
+        self.setData(data.get("asset_path"),ItemRoles.AssetPath)
         self.setData(data.get("asset_name"), ItemRoles.AssetName)
         self.setData(data.get("thumb_path"), ItemRoles.Thumbnail)
         self.setData(data.get("asset_id"), ItemRoles.AssetID)

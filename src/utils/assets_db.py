@@ -10,10 +10,11 @@ import json
 import sqlite3
 import sys
 import os
-import site
 import traceback
 from functools import wraps
 from urllib.parse import unquote
+
+
 os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
 sysPaths = [os.getenv("CgDamROOT"), os.getenv("CgDamROOT") + "/src"]
 for sysPath in sysPaths:
@@ -28,26 +29,6 @@ from utils.generic import merge_dicts
 from utils.file_manager import FileManager
 
 fm = FileManager()
-
-
-def connect(db_file):
-    def connect_(query_func):
-        @wraps(query_func)
-        def connect_wrapper(*args, **kwargs):
-            try:
-                conn = sqlite3.connect(db_file)
-                query_func(conn, *args, **kwargs)
-            except Exception as e:
-                print(traceback.format_exc())
-                raise e
-            else:
-                conn.commit()
-                conn.close()
-
-        return connect_wrapper
-
-    return connect_
-
 
 class Connect(object):
     db_file = None
@@ -118,6 +99,7 @@ class AssetsDB(Connect):
                 name TEXT,
                 asset_type_id INTEGER,
                 asset_category_id INTEGER,
+                asset_path TEXT DEFAULT None,
                 creation_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 modification_date DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
                 uuid TEXT DEFAULT (lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab',abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)))),
@@ -324,42 +306,7 @@ class AssetsDB(Connect):
         cur.execute("SELECT last_insert_rowid();")
         ids = cur.fetchall()
         return ids[0][0]
-  
-    @Connect.db
-    def get_asset_uuid(self, conn, asset_name, asset_category, asset_type_name):
-        cur = conn.cursor()
-        asset_category_id = self.get_category_from_tree(asset_category= asset_category, asset_type_name= asset_type_name)
-        cur.execute(f'''SELECT uuid from assets
-                     WHERE name="{asset_name}" 
-                     AND asset_type_id = (SELECT id FROM asset_types WHERE name="{asset_type_name}")
-                     AND asset_category_id = (SELECT id FROM categories WHERE id="{asset_category_id}")
-                     ''')
-        uuids = cur.fetchone()
-        if uuids:
-            return uuids[0]
-        else:
-            raise Exception(f"Asset '{asset_name}' not found")
-    
-    @Connect.db
-    def get_asset_name(self, conn, uuid):
-        cur = conn.cursor()
-        cur.execute(f'SELECT name from assets WHERE uuid="{uuid}"')
-        names = cur.fetchone()
-        if names:
-            return names[0]
-        else:
-            return ""
-        
-    @Connect.db
-    def get_asset_id(self, conn, uuid):
-        cur = conn.cursor()
-        cur.execute(f'SELECT id from assets WHERE uuid="{uuid}"')
-        ids = cur.fetchone()
-        if ids:
-            return ids[0]
-        else:
-            return None
-        
+
     @Connect.db
     def get_latest_edit_asset_name(self, conn):
         cur = conn.cursor()
@@ -515,7 +462,7 @@ class AssetsDB(Connect):
         cur.execute(query)
     
     @Connect.db
-    def add_asset(self, conn, asset_name, asset_type_name, asset_category):
+    def add_asset(self, conn, asset_name, asset_type_name, asset_category, asset_path = None):
         cur = conn.cursor()
         asset_type_id = cur.execute(f'SELECT id FROM asset_types WHERE name="{asset_type_name}";').fetchone()[0]
         if not asset_type_id:
@@ -527,15 +474,15 @@ class AssetsDB(Connect):
             return            
         now = datetime.datetime.now()
         current_date = now.strftime("%Y/%m/%d, %H:%M:%S")
-        
+        asset_path_text = asset_path or "None"
         query = f'''
                 INSERT INTO assets 
-                (name, asset_type_id, asset_category_id, modification_date)
+                (name, asset_type_id, asset_category_id, asset_path, modification_date)
                 VALUES
-                ("{asset_name}", "{asset_type_id}", "{asset_category_id}", "{current_date}")
+                ("{asset_name}", "{asset_type_id}", "{asset_category_id}", "{asset_path_text}", "{current_date}")
                 ON CONFLICT(name, asset_type_id, asset_category_id) 
                 DO UPDATE
-                SET modification_date = "{current_date}";
+                SET modification_date = "{current_date}", asset_path = "{asset_path_text}";
         '''
         cur.execute(query)
         query = f'''
@@ -734,6 +681,68 @@ class AssetsDB(Connect):
         return materials
 
     @Connect.db
+    def get_asset_uuid(self, conn, asset_name, asset_category, asset_type_name):
+        cur = conn.cursor()
+        asset_category_id = self.get_category_from_tree(asset_category= asset_category, asset_type_name= asset_type_name)
+        cur.execute(f'''SELECT uuid from assets
+                     WHERE name="{asset_name}" 
+                     AND asset_type_id = (SELECT id FROM asset_types WHERE name="{asset_type_name}")
+                     AND asset_category_id = (SELECT id FROM categories WHERE id="{asset_category_id}")
+                     ''')
+        uuids = cur.fetchone()
+        if uuids:
+            return uuids[0]
+        else:
+            raise Exception(f"Asset '{asset_name}' not found")
+    
+    @Connect.db
+    def get_asset_name(self, conn, uuid):
+        cur = conn.cursor()
+        cur.execute(f'SELECT name from assets WHERE uuid="{uuid}"')
+        names = cur.fetchone()
+        if names:
+            return names[0]
+        else:
+            return ""
+        
+    @Connect.db
+    def get_asset_id(self, conn, uuid):
+        cur = conn.cursor()
+        cur.execute(f'SELECT id from assets WHERE uuid="{uuid}"')
+        ids = cur.fetchone()
+        if ids:
+            return ids[0]
+        else:
+            return None
+        
+    @Connect.db
+    def get_asset_data(self, conn, uuid):
+        """id, name, asset_type, asset_category_id, asset_path, creation_date, modification_date, uuid"""
+        cur = conn.cursor()
+        query = f'''
+                SELECT a.id, a.name, at.name AS asset_type, a.asset_category_id, a.asset_path, a.creation_date, a.modification_date, a.uuid
+                FROM assets a
+                INNER JOIN asset_types at ON a.asset_type_id = at.id
+                WHERE uuid = "{uuid}";
+        '''
+        cur.execute(query)
+        ids = cur.fetchone()
+        if ids:
+            return ids
+        else:
+            return None
+                
+    @Connect.db
+    def get_asset_path(self, conn, uuid):
+        cur = conn.cursor()
+        cur.execute(f'SELECT asset_path from assets WHERE uuid="{uuid}"')
+        paths = cur.fetchone()
+        if paths:
+            return paths[0]
+        else:
+            return None
+                      
+    @Connect.db
     def get_assets_data(self, conn, asset_type_name=None, asset_category=None, recursive_category = True):
         cur = conn.cursor()
         asset_type_text = ""
@@ -748,7 +757,7 @@ class AssetsDB(Connect):
                 asset_category_id_list = ",".join([str(x) for x in asset_category_id_list])
                 asset_type_text += f' AND asset_category_id IN ({asset_category_id_list});'
         query = f'''
-                SELECT a.id, a.name, at.name AS asset_type, a.asset_category_id, a.creation_date, a.modification_date, a.uuid, g.*
+                SELECT a.id, a.name, at.name AS asset_type, a.asset_category_id, a.asset_path, a.creation_date, a.modification_date, a.uuid, g.*
                 FROM assets a
                 INNER JOIN asset_types at ON a.asset_type_id = at.id
                 LEFT JOIN geometry g ON a.id = g.asset_id
@@ -762,13 +771,17 @@ class AssetsDB(Connect):
     @Connect.db
     def get_asset(self, conn, uuid):
         asset = {}
-        asset_name = self.get_asset_name(uuid=uuid)
-        asset_id = self.get_asset_id(uuid=uuid)
-        geometries = self.get_geometry(asset_id=asset_id, obj_file='', usd_geo_file='', abc_file='', fbx_file='')
-        asset_data = json.loads(self.get_geometry(asset_id=asset_id, mesh_data='')['mesh_data'])
-        materials = self.get_textures(uuid=uuid)
+        data = self.get_asset_data(uuid=uuid)
 
-        asset["name"] = asset_name
+        geometries = self.get_geometry(asset_id=data[0], obj_file='', usd_geo_file='', abc_file='', fbx_file='')
+        asset_data = self.get_geometry(asset_id=data[0], mesh_data='')
+        materials = self.get_textures(uuid=uuid)
+        
+        asset["id"] = data[0]
+        asset["name"] = data[1]
+        asset["path"] = data[4]
+        asset["type"] = data[2]
+        asset["category"] = self.get_tree_from_category(asset_category= data[3],asset_type_name= data[2])
         asset["geo_paths"] = geometries
         asset["asset_data"] = asset_data
         asset["materials"] = materials
@@ -875,12 +888,6 @@ class AssetsDB(Connect):
 
         return [x[0] for x in projects if x[0]]
 
-    def delete_asset_projects(self, asset_id=None):
-        self.delete_row(table_name="asset_projects", col="asset_id", value=asset_id)
-
-    def delete_asset_tags(self, asset_id=None):
-        self.delete_row(table_name="asset_tags", col="asset_id", value=asset_id)
-
     @Connect.db
     def set_thumbnail(self, conn, asset_id=None, thumb_path=""):
         if thumb_path == "":
@@ -918,16 +925,34 @@ class AssetsDB(Connect):
         else:
             return [x[0] for x in data]
 
+    def delete_asset_projects(self, asset_id=None):
+        self.delete_row(table_name="asset_projects", col="asset_id", value=asset_id)
+
+    def delete_asset_tags(self, asset_id=None):
+        self.delete_row(table_name="asset_tags", col="asset_id", value=asset_id)
+    
+    def resolve_asset_path(self, asset):
+        """
+        To resolve the asset paths like relative path and $project
+        :param asset: dictionary as returned from db.get_asset() --> ["path","type","category","name"]
+        :return: resolved path
+        """        
+        db_file = Connect.db_file
+        resolved = fm.resolve_path(source_path=asset["path"],relatives_to=db_file,
+                        variables = {"$asset_type" : asset["type"],
+                                     "$asset_category": asset["category"],
+                                     "$asset_name": asset["name"]})
+        return resolved
 
 # Main Function
 def main():
     db = AssetsDB()
-    
+      
     db.add_asset_type(asset_type_name="3D Asset")
     db.add_asset_type(asset_type_name="Textures")
     db.add_asset_type(asset_type_name="Shaders")
     db.add_asset_type(asset_type_name="HDRI")
-    """
+    
     db.add_typed_category(category_name="muebles",asset_type_name="3D Asset")
     db.add_typed_category(category_name="sofas",asset_type_name="3D Asset",parent_category="muebles")
     db.add_typed_category(category_name="indor",asset_type_name="3D Asset",parent_category="muebles/sofas")
@@ -936,17 +961,22 @@ def main():
     db.add_typed_category(category_name="indor",asset_type_name="3D Asset",parent_category="muebles/mesas")
     db.add_typed_category(category_name="outdor",asset_type_name="3D Asset",parent_category="muebles/mesas")  
     
-    db.add_asset(asset_name="sofa_exterior",asset_type_name="3D Asset",asset_category="muebles/sofas/outdor")
-    db.add_asset(asset_name="mesa_interior",asset_type_name="3D Asset",asset_category="muebles/mesas/indor")
+    db.add_asset(asset_name="sofa_exterior",asset_type_name="3D Asset",asset_category="muebles/sofas/outdor", asset_path="../$asset_type/$asset_category/$asset_name")
+    db.add_asset(asset_name="mesa_interior",asset_type_name="3D Asset",asset_category="muebles/mesas/indor", asset_path="../$asset_type/$asset_category/$asset_name")
     
-
-    #db.add_typed_category(category_name="random",asset_type_name="Textures")
-    db.add_asset(asset_name="texture_test",asset_type_name="Textures",asset_category="random")
+    """ 
+    db.add_typed_category(category_name="random",asset_type_name="Textures")
+    db.add_asset(asset_name="texture_test",asset_type_name="Textures",asset_category="random", asset_path="../$asset_type/$asset_category/$asset_name")
     """
     #print(db.get_all_children_categories(asset_category="muebles/sofas"))
     #print(db.get_tree_from_category(asset_category="muebles/sofas"))
     #print(db.get_tree_from_category(asset_category=7))
-    print(db.get_assets_data())
+    #print(db.get_assets_data())
+    
+    asset = db.get_asset(uuid=db.get_asset_uuid(asset_name="sofa_exterior",asset_category="muebles/sofas/outdor",asset_type_name="3D Asset"))
+    print(asset)#db.get_asset_data(uuid="c7289d05-5681-431a-9dcd-13e456dbd07f"))
+    
+    print(db.resolve_asset_path(asset))
     #for i in range(50):
     #    db.add_asset(asset_name=f"texture_new_{i}",asset_type_name="Textures")
     #print(db.all_asset_types())
