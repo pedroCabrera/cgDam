@@ -18,7 +18,7 @@ for sysPath in sysPaths:
 
 from lib.assets_browser.window import AssetViewWindow
 from settings.settings_window import SettingsWindow
-from startup.dcc_integration import add_djed_integration
+from startup.dcc_integration import add_cgDam_integration
 from utils.resources.stylesheet import get_stylesheet
 from utils.resources.style_rc import *
 
@@ -53,7 +53,7 @@ class cgDamTray(QSystemTrayIcon):
     def create_menus(self):
         menu = QMenu(self._parent)
 
-        djed_action = menu.addAction("cgDam Tools")
+        cgDam_action = menu.addAction("cgDam Tools")
 
         menu.addSeparator()
 
@@ -98,7 +98,7 @@ class cgDamTray(QSystemTrayIcon):
         time.sleep(2)
 
     def add_integration(self):
-        msg_txt = add_djed_integration()
+        msg_txt = add_cgDam_integration()
 
     def on_tray_activated(self, action):
         if action == self.DoubleClick:

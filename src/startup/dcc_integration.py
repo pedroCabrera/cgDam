@@ -17,7 +17,7 @@ from dcc.spp.hooks.start import add_spp_startup
 from dcc.clarisse.hooks.start import add_clarisse_shelf
 
 
-def add_djed_integration():
+def add_cgDam_integration():
     msg = []
     msg.append(f'<p><span>Maya integration: </span> {add_maya_module()}</p>')
     msg.append(f'<p><span>Substance painter integration: </span> {add_spp_startup()}</p>')
