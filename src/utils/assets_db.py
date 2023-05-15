@@ -15,7 +15,6 @@ from functools import wraps
 from urllib.parse import unquote
 
 
-os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
 sysPaths = [os.getenv("CgDamROOT"), os.getenv("CgDamROOT") + "/src"]
 for sysPath in sysPaths:
     if sysPath not in sys.path:

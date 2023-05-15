@@ -14,7 +14,7 @@ from PySide2.QtWidgets import *
 
 import os
 import sys
-os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
+
 CgDamROOT = os.getenv("CgDamROOT")
 sysPaths = [CgDamROOT, f"{CgDamROOT}/src"]
 for sysPath in sysPaths:

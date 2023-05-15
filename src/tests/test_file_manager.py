@@ -12,7 +12,6 @@ import platform
 
 import unittest
 
-os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
 
 CgDamROOT = os.getenv('CgDamROOT')
 utils_path = os.path.join(CgDamROOT, 'src')

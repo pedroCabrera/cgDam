@@ -4,9 +4,9 @@
 #define MyAppName "cgDam"
 #define MyAppVersion "0.1.1"
 #define MyAppPublisher "cgDam Tools."
-#define MyAppURL "https://github.com/Michaelredaa/cgDam"
+#define MyAppURL "https://github.com/pedroCabrera/cgDam"
 #define MyAppExeName "cgDam.exe"
-#define ROOT "C:\Users\michael\Documents\work\cgDam"
+#define ROOT "D:\Google Drive\CODE\Pipeline\cgDam"
 #define SPP "C:\Program Files\Adobe\Adobe Substance 3D Painter\Adobe Substance 3D Painter.exe"
 #define BuildName "build\exe.win-amd64-3.9"
 

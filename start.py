@@ -10,8 +10,8 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 
 os.environ['CgDamROOT'] = os.path.abspath("./cgDam")
-
 CgDamROOT = Path(os.getenv('CgDamROOT'))
+
 sysPaths = [CgDamROOT.as_posix(), CgDamROOT.joinpath('src').as_posix()]
 for sysPath in sysPaths:
     if sysPath not in sys.path:
